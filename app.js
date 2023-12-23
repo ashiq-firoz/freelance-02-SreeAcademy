@@ -3,6 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var hbs = require('express-handlebars');
+const mongoose = require("mongoose");
+var session = require('express-session')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,12 +15,28 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutDir:__dirname+'/views/layouts/',partialsDir:__dirname+'/views/partials/'}));
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Connect to DB and start server
+const PORT = 8000;
+const MONGO_URI="mongodb+srv://sreekrishnaacadmey:CyAf9yxQWrdz4t3V@cluster0.olcudcb.mongodb.net/?retryWrites=true&w=majority";
+
+const connect = mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Mongo Server Running on port ${PORT}`);
+    });
+  })
+  .catch((err) => console.log(err));
+
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
