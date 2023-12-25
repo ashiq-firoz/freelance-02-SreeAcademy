@@ -6,11 +6,15 @@
     </div>
     <div class="row">
         <div class="col-md-6">
-            <form>
+          {{#each data}}
+         
+          {{#if this.name}}
+            <form action="/updateprofile" method="post">
+              <input type="text" value="{{this.name}}" hidden name="oldname">
                 <div class="form-group"> <label for="username">User Name</label> <input type="text" class="form-control"
-                        id="username" placeholder="Enter User Name" name="user" required> </div>
+                        id="username" placeholder="Enter User Name" name="name" required value="{{this.name}}"> </div>
                 <div class="form-group"> <label for="email">Email</label> <input type="email" class="form-control"
-                        id="email" placeholder="Enter Email" name="email" required> </div>
+                        id="email" placeholder="Enter Email" name="email" required value="{{this.email}}"> </div>
                 
                  <div class="form-group"> <label for="email">Enter Your current password</label> <input type="password" class="form-control"
                         id="password" placeholder="password" name="password" required> </div>
@@ -18,6 +22,9 @@
            <button type="submit"
                     class="btn btn-primary">Save</button> <button type="reset" class="btn btn-secondary">Cancel</button>
             </form>
+            {{/if}}
+            
+            {{/each}}
         </div>
     </div>
     <br><br><br>
@@ -41,7 +48,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <form>
+        <form action="/changepss" method="post">
+                 {{#each data}}
+                 {{#if this.name}}
+                 <input type="text" name="name" hidden value="{{this.name}}">
+                 {{/if}}
+                 {{/each}}
                 <div class="form-group"> 
                         <label for="username">New Password</label> 
                         <input type="password" class="form-control"

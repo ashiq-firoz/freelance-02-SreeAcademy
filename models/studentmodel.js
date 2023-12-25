@@ -28,7 +28,7 @@ const studentSchema = mongoose.Schema(
       type: String,
     },
     attendance: {
-      type: String,
+      type: Number,
     },
     watchList: {
       type: Boolean,
@@ -36,6 +36,9 @@ const studentSchema = mongoose.Schema(
     star: {
       type: Boolean,
     },
+    previousStudent : {
+      type : Boolean,
+    }
   },
   {
     timestamps: true,

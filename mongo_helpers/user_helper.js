@@ -12,7 +12,8 @@ module.exports = {
                         password : pss,
                         email : data["email"],
                     }
-                )
+                );
+                resolve(true);
             }
             catch(err){
                 console.log(err)
@@ -50,21 +51,32 @@ module.exports = {
 
     updateuser : (data)=>{
           return new Promise(async(resolve,reject)=>{
+            console.log(data)
             let user = await User.findOne({"name":data['oldname']});
             if(!user){
                 resolve(false);
             }
             else{
-                await User.findByIdAndUpdate(
-                    {
-                        _id : user._id,
-                    },
-                    {
-                        name : data['name'],
-                        email : data['email'],
-                    }
-                )
-                resolve(true);
+                bcrypt
+                    .compare(data["password"], user["password"])
+                    .then(async(status) => {
+                      if (status) {
+                        console.log("updating");
+                        await User.findByIdAndUpdate(
+                            {
+                                _id : user._id,
+                            },
+                            {
+                                name : data['name'],
+                                email : data['email'],
+                            }
+                        )
+                        resolve(true);
+
+                      } else {
+                        resolve(false);
+                      }
+                    });
             }
           });
     },
@@ -101,6 +113,20 @@ module.exports = {
             }
             catch(err){
                 resolve(false);
+            }
+        });
+    },
+
+    getuser : (user)=>{
+        return new Promise (async(resolve,reject)=>{
+            const userdata = await User.findOne({_id:user});
+
+            if(userdata==null){
+                resolve(false);
+
+            }
+            else{
+                resolve(userdata);
             }
         });
     }

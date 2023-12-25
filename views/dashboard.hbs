@@ -41,7 +41,7 @@
 
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/categories" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/attendance" style="color: aliceblue;">
                             <i class="fs-4 bi-check-lg"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Attendance</span>
                         </a>
@@ -53,39 +53,38 @@
 
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/items" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/calendar" style="color: aliceblue;">
                             <i class="fs-4 bi-calendar-event"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Calendar</span>
                         </a>
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/items" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/cultural" style="color: aliceblue;">
                             <i class="fs-4 bi-trophy"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Cultural Events</span>
                         </a>
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/items" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/students" style="color: aliceblue;">
                             <i class="fs-4 bi-book"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Student List</span>
                         </a>
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/items" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/teachers" style="color: aliceblue;">
                             <i class="fs-4 bi-book"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Teachers Attendance</span>
                         </a>
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" data-toggle="collapse" href="#list3" role="button"
-                            aria-expanded="false" aria-controls="collapseExample" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/lists" style="color: aliceblue;">
                             <i class="fs-4 bi-list-ul"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Lists > </span>
                         </a>
                        
                     </li>
                     <li>
-                        <a class="btn px-0 align-middle" href="/vendor/weighted" style="color: aliceblue;">
+                        <a class="btn px-0 align-middle" href="/message" style="color: aliceblue;">
                             <i class="fs-4 bi-telegram"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Message</span>
                         </a>
@@ -184,8 +183,7 @@
             <nav class="navbar navbar-expand-lg navbar-light" style="height:min-content;background-color:white;">
                 
 
-                <a class="btn ml-auto" {{#if m}}href="/manufacturer/updateuser" {{else}}href="/vendor/updateuser"
-                    {{/if}}>
+                <a class="btn ml-auto" href="/profile">
                     <span class="d-sm-inline mx-1 text-dark">Profile</span>
                 </a>
 
@@ -200,7 +198,47 @@
 
 
             <!--content-->
+            {{#if students}}
+           {{>students}}
+           {{/if}}
+
+            {{#if profile}}
            {{>profile}}
+           {{/if}}
+
+           {{#if attendance}}
+           {{>attendance}}
+           {{/if}}
+
+           {{#if calendar}}
+           {{>addevent}}
+           {{/if}}
+
+           {{#if cultural}}
+           {{>awardee}}
+           {{/if}}
+
+           {{#if teachers}}
+           {{>teacherattendance}}
+           {{/if}}
+
+           {{#if lists}}
+           {{>watchlist}}
+           {{/if}}
+
+           {{#if message}}
+           {{>message}}
+           {{/if}}
+
+           {{#if addstudent}}
+           {{>student_details}}
+           {{/if}}
+
+           {{#if updatestudent}}
+           {{>student_details}}
+           {{/if}}
+           
+           
 
 
         </div>
@@ -270,7 +308,7 @@
         closeLogoutPopup();
     }
     function leavePage() {
-        window.location.href = "/vendor/logout";
+        window.location.href = "/logout";
     }
     function changeImageHappy() {
         changeImageContent('bi-emoji-laughing-fill', '400px');

@@ -7,11 +7,6 @@ const enrolledSchema = mongoose.Schema(
       required: [true, "Please add user"],
       trim: true,
     },
-    student: {
-      type: String,
-      required: [true, "Please add student"],
-      trim: true,
-    },
     name: {
       type: String,
       trim: true,
@@ -21,9 +16,6 @@ const enrolledSchema = mongoose.Schema(
     },
     course: {
       type: String,
-    },
-    expiry: {
-      type: Boolean,
     },
   },
   {

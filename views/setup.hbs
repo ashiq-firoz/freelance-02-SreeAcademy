@@ -16,7 +16,7 @@
 
                 </div>
                 
-                <form action="/vendor/login" method="POST">
+                <form action="/register" method="POST">
                 <div class="alert alert-danger" role="alert" hidden id="Alert" 
                         style="background-color: rgba(255, 0, 0, 0.5); border-color: rgba(255, 0, 0, 0.5);color:white">
                         Invalid Username or Password
@@ -39,14 +39,7 @@
 
                     <input type="password" placeholder="Enter your password" class="form-control" id="password"
                         name="password" required><br>
-                    <div style="display: flex; align-items:baseline; justify-content:baseline;">
-                        <p style="font-size: 18px;">Show Password</p>&nbsp;&nbsp;&nbsp;<input type="checkbox"
-                            onclick="myFunction()" id="check">
-                    </div>
-                    {{!-- <div style="display: flex; align-items:baseline; justify-content:baseline;">
-                        <p style="font-size: 18px;">Remember me</p>&nbsp;&nbsp;&nbsp;<input type="checkbox" name=""
-                            id="check">
-                    </div> --}}
+            
                     <input type="submit" value="Login" name="" id="submit">
                 </form>
             </div>

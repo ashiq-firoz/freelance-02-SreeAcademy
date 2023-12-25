@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const courseSchema = mongoose.Schema(
+const prevenrolledSchema = mongoose.Schema(
   {
     user: {
       type: String,
@@ -9,20 +9,20 @@ const courseSchema = mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, "Please add name"],
       trim: true,
     },
-    img: {
+    admissionNo: {
       type: String,
     },
-    noOfClass: {
-      type: Number,
+    course: {
+      type: String,
     },
+   
   },
   {
     timestamps: true,
   }
 );
 
-const Course = mongoose.model("Course", courseSchema);
-module.exports = Course;
+const PrevEnrolled = mongoose.model("PrevEnrolled", prevenrolledSchema);
+module.exports = Enrolled;

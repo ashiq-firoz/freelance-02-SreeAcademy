@@ -7,7 +7,7 @@ const guardiansSchema = mongoose.Schema(
       required: [true, "Please add user"],
       trim: true,
     },
-    student: {
+    student: { //admno
       type: String,
       required: [true, "Please add student"],
       trim: true,
@@ -28,6 +28,7 @@ const guardiansSchema = mongoose.Schema(
     phone2: {
       type: String,
       trim: true,
+      default : ""
     },
     whatsapp: {
       type: String,
@@ -36,6 +37,7 @@ const guardiansSchema = mongoose.Schema(
     email: {
       type: String,
       trim: true,
+      default : ""
     },
   },
   {
