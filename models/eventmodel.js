@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const eventsSchema = mongoose.Schema(
   {
-    day: {
+    start: { //day
       type: String,
       required: [true, "Please add day"],
       trim: true,

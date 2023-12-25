@@ -1,0 +1,20 @@
+<div class="container">
+    <h1>Select a Course</h1><br>
+    <div class="row">
+        {{#each data}}
+        {{#each this}}
+        {{#if this.name}}
+        <div class="col-sm-6">
+            <div class="card">
+                <img class="card-img-top" style="height: 10rem;" src="..." alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{this.name}}</h5>
+                    <a href="/takeattendance?id={{this._id}}" class="btn btn-success">Take Attendance</a>
+                </div>
+            </div>
+        </div>
+        {{/if}}
+        {{/each}}
+        {{/each}}
+    </div>
+</div>

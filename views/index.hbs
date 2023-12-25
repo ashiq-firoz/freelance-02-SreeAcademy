@@ -1,2 +1,111 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<html>
+
+<head>
+    <link rel="stylesheet" href="/css/vender_login.css">
+</head>
+
+<body style="background-color: #000000;">
+    <section> 
+        <div class="contentBx" style="background-color: #000000;">
+            <div class="formBx" style="align-self: center;">
+                <div class="background">
+                    <div class="shape"></div>
+                    <div class="shape"></div>
+
+                </div>
+                
+                <form action="/vendor/login" method="POST">
+                <div class="alert alert-danger" role="alert" hidden id="Alert" 
+                        style="background-color: rgba(255, 0, 0, 0.5); border-color: rgba(255, 0, 0, 0.5);color:white">
+                        Invalid Username or Password
+                    </div>
+
+                    <div style="display: flex; height:40px;"><a href="/vendor/logout" class="previous round"
+                            style="padding-left: 20px;">&#8249;</a>
+                        <h2>&nbsp;&nbsp;Login </h2>
+                    </div>
+                    
+                    <label for="username">Username</label>
+                    <input type="text" placeholder="Enter your username" class="form-control" id="name" name="name"
+                        required autofocus>
+
+                    <label for="pass">Password</label>
+
+                    <input type="password" placeholder="Enter your password" class="form-control" id="password"
+                        name="password" required><br>
+                    <div style="display: flex; align-items:baseline; justify-content:baseline;">
+                        <p style="font-size: 18px;">Show Password</p>&nbsp;&nbsp;&nbsp;<input type="checkbox"
+                            onclick="myFunction()" id="check">
+                    </div>
+                    {{!-- <div style="display: flex; align-items:baseline; justify-content:baseline;">
+                        <p style="font-size: 18px;">Remember me</p>&nbsp;&nbsp;&nbsp;<input type="checkbox" name=""
+                            id="check">
+                    </div> --}}
+                    <input type="submit" value="Login" name="" id="submit">
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div id="qalert" class="popup" hidden style="border-radius: 25px;background-color: rgba(54, 54, 54, 0.815);">
+        <div class="popup-content">
+            <span class="" onclick="closePopup()">Wrong Username or password</span>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            document.getElementById("qalert").hidden = false;
+            document.getElementById("Alert").hidden = false;
+            setTimeout(function () {
+                document.getElementById("qalert").hidden = true;
+                document.getElementById("Alert").hidden = true;
+            }, 1500);
+        }
+
+    </script>
+
+    <script>
+        function closePopup() {
+            document.getElementById("qalert").hidden = true;
+        }
+        function login() {
+            $.ajax({
+                url: "/vendor/login",
+                method: 'POST',
+                data: {
+                    name: document.getElementById("name").value,
+                    password: document.getElementById("password").value,
+                },
+                success: function (data) {
+                    console.log('Post request successful:', data);
+                    if (data.status == true) {
+                        console.log("Done");
+
+                    }
+                    else {
+                        alert("Try Again")
+                    }
+                },
+                error: function (error) {
+                    console.error('Error in GET request:', error);
+                }
+            });
+        }
+
+        function myFunction() {
+            var x = document.getElementById("password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+</body>
+
+</html>

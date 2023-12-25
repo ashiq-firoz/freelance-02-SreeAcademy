@@ -17,6 +17,9 @@ const awardListSchema = mongoose.Schema(
       required: [true, "Please add admNo"],
       trim: true,
     },
+    stuname :{
+      type : String,
+    },
     event: {
       type: String,
       required: [true, "Please add event"],
@@ -26,6 +29,9 @@ const awardListSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add awardName"],
       trim: true,
+    },
+    date:{
+      type : String,
     },
   },
   {

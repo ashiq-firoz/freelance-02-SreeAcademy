@@ -1,0 +1,129 @@
+<style>
+        /* Set height of the calendar to 50% */
+        #calendar {
+            height: 50vh;
+            overflow-y: auto; /* Add scrollbar if needed */
+        }
+
+        /* Style for event details */
+        #event-details {
+            margin-top: 20px;
+        }
+    </style>
+
+<br>
+<div class="container">
+    <div id="calendar"></div>
+    <div id="event-details">
+        <h2>Select a day to view events</h2>
+    </div>
+     <button class="btn btn-dark" style="color:white"  data-toggle="modal" data-target="#eventmodal">
+            <i class="fs-4 bi-plus-lg"></i><span class="ms-1 d-none d-sm-inline">&nbsp;Add new </span>
+        </button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="eventmodal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLongTitle">Create New Event</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="" method="post" id="addform">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="formGroupInput">Event Title</label>
+                        <input type="text" class="form-control" id="formGInput" name="title" placeholder="Event Title"  required>
+
+                        <label for="formGroupInput">Date</label>
+                        <input type="date" class="form-control" id="formGInput" name="start"   required>
+                        
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="active" value="check" id="defaultCheck1"
+                            checked required>
+                        <label class="form-check-label" for="defaultCheck1">
+                            Activate
+                        </label>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" onclick="submitForm()" data-dismiss="modal">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/gcal.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,basicWeek,basicDay'
+            },
+            events: [
+                {
+                    title: 'Event 1',
+                    start: '2023-12-01'
+                },
+                {
+                    title: 'Event 2',
+                    start: '2023-12-10',
+                    end: '2023-12-12'
+                },
+                // Add more events as needed
+            ],
+            dayClick: function (date, jsEvent, view) {
+                // Handle day click event
+                showEventDetails(date.format());
+            }
+        });
+
+        function showEventDetails(selectedDate) {
+            // Example: Array of events (replace with your actual data)
+            const events = [
+                { title: 'Event 1', start: '2023-12-01' },
+                { title: 'Event 3', start: '2023-12-01' },
+                { title: 'Event 2', start: '2023-12-10', end: '2023-12-12' },
+                // Add more events as needed
+            ];
+
+            // Filter events for the selected date
+            const selectedEvents = events.filter(event => event.start === selectedDate);
+
+            // Display event details below the calendar
+            const eventDetailsContainer = document.getElementById('event-details');
+            eventDetailsContainer.innerHTML = '<h3>Events on ' + selectedDate + '</h3>';
+
+            if (selectedEvents.length > 0) {
+                const ul = document.createElement('ul');
+                selectedEvents.forEach(event => {
+                    const li = document.createElement('li');
+                    li.textContent = event.title;
+                    ul.appendChild(li);
+                });
+                eventDetailsContainer.appendChild(ul);
+            } else {
+                eventDetailsContainer.innerHTML += '<p>No events for this day</p>';
+            }
+        }
+    });
+</script>
