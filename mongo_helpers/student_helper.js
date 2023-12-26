@@ -253,11 +253,11 @@ module.exports = {
         });
     },
 
-    addpayment : (user,data)=>{
+    addstupayment : (user,data)=>{
         return new Promise(async(resolve,reject)=>{
             try{
-                console.log("data")
-                console.log(data)
+                //console.log("data")
+                //console.log(data)
                 const p = await Payment.create({
                     user : user,
                     student : data['admno'],
@@ -266,11 +266,11 @@ module.exports = {
                     balance : data['due'],
                     date : data['date'],
                 })
-                console.log(p);
+                //console.log(p);
                 resolve(true);
             }
             catch(err){
-                console.log(err);
+                //console.log(err);
                 resolve(false);
             }
         });

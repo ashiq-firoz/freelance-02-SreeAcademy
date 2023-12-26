@@ -42,6 +42,7 @@
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
  &nbsp; &nbsp; &nbsp;
+ <form action="/addattendance" method="post">
         <input type="date" name="date" id="date" class="form-control" style="width: min-content;">
        
         {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
@@ -51,26 +52,19 @@
 </nav>
 
 
-<!--
-sample elements to clone
-
-add td element
--->
-<input type="text"  name="clonein" style="display: none;" value="">
 
 <!--data storing dummy elements--> 
 {{#each data}}
 {{#each this}}
 {{#if this.name}}
 <input type="text"  id="id{{this.name}}" name="id" style="display: none;" value="{{this._id}}">
-<input type="text"  id="category{{this.name}}" name="category" style="display: none;" value="{{this.name}}">
-<input type="text"  id="regional{{this.name}}" name="regional" style="display: none;" value="{{this.regional_name}}">
-<input type="text"  id="active{{this.name}}" name="active" style="display: none;" value="{{this.status}}">
 {{/if}}
 {{/each}}
 {{/each}}
 
 <!--dummy elements over-->
+
+<input type="text" name="course" value="{{cname}}" hidden>
 
 <div class="container scrollable-container">
     {{name}}
@@ -92,34 +86,29 @@ add td element
             {{#each this}}
             {{#if this.name}}
             <tr id="{{this.name}}">
-                
-                <input type="text"  name="id" style="display: none;" value="{{this._id}}">
                 <td>
-                    <input type="text" id="{{@../index}}" name="adminNo" style="display: none;" value="{{this.adminNo}}">
-                    {{this.adminNo}}
+                    {{this.admissionNo}}
                 </td>
                 <td>
-                    <input type="text"  name="name" style="display: none;" value="{{this.name}}">
                     {{this.name}}
                 </td>
                 <td>
                     <label class="custom-checkbox">
-                    <input type="checkbox" name="present" value="present">
+                    <input type="checkbox" name="present" value="{{this.admissionNo}}present"  class="checkbox-group">
                     <span class="checkmark"></span>
                     </label>
                 </td>
                 <td>
                     <label class="custom-checkbox">
-                    <input type="checkbox" name="present" value="absent">
+                    <input type="checkbox" name="present" value="{{this.admissionNo}}absent"  class="checkbox-group">
                     <span class="checkmark"></span>
                     </label>
                 </td>
             {{/if}}
             {{/each}}
-            </tr>
-        
-           
+            </tr>           
             {{/each}}
+
         </tbody>
     </table>
     </center>
@@ -134,8 +123,34 @@ add td element
 <button type="submit" class="btn btn-success">Submit</button>
 </div>
 </center>
+</form>
 
 <!-- Include this script in your HTML file -->
+
+
+ <script>
+    // Get all checkboxes with the class 'checkbox-group'
+    const checkboxes = document.querySelectorAll('.checkbox-group');
+
+    // Add a 'change' event listener to each checkbox
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        // Get the parent row of the checkbox
+        const parentRow = checkbox.closest('tr');
+
+        // Get all checkboxes within the same row
+        const checkboxesInRow = parentRow.querySelectorAll('.checkbox-group');
+
+        // When a checkbox is selected, deselect the other checkbox in the same row
+        checkboxesInRow.forEach(otherCheckbox => {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.checked = false;
+          }
+        });
+      });
+    });
+  </script>
+
 <script>
      var currentDate = new Date();
     var year = currentDate.getFullYear();

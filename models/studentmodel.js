@@ -38,6 +38,10 @@ const studentSchema = mongoose.Schema(
     },
     previousStudent : {
       type : Boolean,
+    },
+    totalnoofclass : {
+      type : Number,
+      default : 0,
     }
   },
   {

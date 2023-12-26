@@ -7,7 +7,7 @@ const courseSchema = mongoose.Schema(
       required: [true, "Please add user"],
       trim: true,
     },
-    name: {
+    name: { 
       type: String,
       required: [true, "Please add name"],
       trim: true,

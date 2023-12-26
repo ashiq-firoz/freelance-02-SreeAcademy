@@ -9,14 +9,14 @@ const attendanceSchema = mongoose.Schema(
     },
     course: {
       type: String,
-      required: [true, "Please add course"],
       trim: true,
+      default : "All"
     },
     date: {
       type: Date,
       required: [true, "Please add date"],
     },
-    studentName: {
+    name: {
       type: String,
       required: [true, "Please add studentName"],
       trim: true,
@@ -29,6 +29,10 @@ const attendanceSchema = mongoose.Schema(
     present: {
       type: Boolean,
     },
+    teacher : {
+      type : Boolean,
+      default : false,
+    }
   },
   {
     timestamps: true,

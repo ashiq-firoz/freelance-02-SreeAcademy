@@ -16,7 +16,7 @@ const {
 } = require('../mongo_helpers/user_helper');
 
 const {
-
+ getstudentsforattendance, addattendance,
 } = require("../mongo_helpers/attendance_helper");
 
 const { addguardian, updateguardian } = require('../mongo_helpers/guardian_helper');
@@ -31,7 +31,7 @@ const {
   updateattendance,
   updatestudent,
   getstudents,
-  addpayment,
+  addstupayment,
 } = require("../mongo_helpers/student_helper");
 
 const {
@@ -201,6 +201,9 @@ router.post("/addcourse",(req,res)=>{
 router.get("/takeattendance",(req,res)=>{
   if(req.session.login==true){
     let course = req.query.name;
+    getstudentsforattendance(req.session.user,course).then((response)=>{
+      res.render("dashboard",{takeattendance:true,data:response,cname :course});
+    });
 
   }
   else{
@@ -310,10 +313,10 @@ router.get("/updatestudent",(req,res)=>{
   }
 });
 
-router.post("/addpayment",(req,res)=>{
+router.post("/addstupayment",(req,res)=>{
   if(req.session.login==true){
-    addpayment(req.session.user,req.body).then((response)=>{
-      console.log(response)
+    addstupayment(req.session.user,req.body).then((response)=>{
+      //console.log(response)
       res.json({status:response});
     });
   }
@@ -325,6 +328,17 @@ router.post("/updateguardian",(req,res)=>{
     
     res.json({status : response});
   });
+});
+
+router.post("/addattendance",(req,res)=>{
+  if(req.session.login==true){
+    addattendance(req.session.user,req.body).then((response)=>{
+      res.redirect("/attendance");
+    });
+  }
+  else{
+    res.redirect("/");
+  }
 });
 
 

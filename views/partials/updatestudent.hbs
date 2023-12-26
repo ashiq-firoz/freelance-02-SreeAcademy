@@ -263,8 +263,8 @@
     </div>
     {{/if}}
     <br><br><br>
-    {{#if payment}}
-    {{#each payment}}
+    {{#if pay}}
+    {{#each pay}}
     {{#each this}}
     {{#if this.reciptno}}
     <div class="row container">
@@ -288,8 +288,8 @@
                 <tbody id="paymentTableBody">
                     <!-- Payment details will be added here -->
                     <td>{{@../index}}</td>
-                    <td>{{this.receiptno}}</td>
-                    <td>{{this.data}}</td>
+                    <td>{{this.reciptno}}</td>
+                    <td>{{this.date}}</td>
                     <td>{{this.amount}}</td>
                     <td>{{this.balance}}</td>
                 </tbody>
@@ -571,7 +571,7 @@
         };
 
         // Send data to the server using fetch
-        fetch('/addpayment', {
+        fetch('/addstupayment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
