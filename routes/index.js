@@ -19,12 +19,19 @@ const {
 
 } = require("../mongo_helpers/attendance_helper");
 
-const {
-
-} = require('../mongo_helpers/guardian_helper');
+const { addguardian, updateguardian } = require('../mongo_helpers/guardian_helper');
 
 const {
-
+  addstucourse,
+  addstudent,
+  changestar,
+  changewatchlist,
+  delcourse,
+  getstudent,
+  updateattendance,
+  updatestudent,
+  getstudents,
+  addpayment,
 } = require("../mongo_helpers/student_helper");
 
 const {
@@ -164,7 +171,15 @@ router.get("/cultural",(req,res)=>{
 
 router.get("/students",(req,res)=>{
   if(req.session.login==true){
-    res.render("dashboard",{students:true})
+    getstudents(req.session.user).then((response)=>{
+      if(response==false){
+        res.render("dashboard",{students:true})
+      }
+      else{
+        res.render("dashboard",{students:true,data:response})
+      }
+    });
+    
   }
   else{
     res.redirect("/");
@@ -234,15 +249,27 @@ router.get("/addstudent",(req,res)=>{
 });
 
 router.post("/addstudent",(req,res)=>{
-  console.log(req.body);
-  res.json({status:true});
+  addstudent(req.session.user,req.body).then((response)=>{
+    if(response==false){
+      res.json({status:false});
+    }
+    else{
+      res.json({status:true});
+    }
+  });
+  
 });
 
 
 router.post("/addguardian",(req,res)=>{
-  console.log(req.body);
-  res.json({status:true});
-
+  addguardian(req.session.user,req.body).then((response)=>{
+    if(response==false){
+      res.json({status:false});
+    }
+    else{
+      res.json({status:true});
+    }
+  });
 });
 
 router.post("/addpayment",(req,res)=>{
@@ -252,15 +279,31 @@ router.post("/addpayment",(req,res)=>{
 });
 
 router.post("/addstucourse",(req,res)=>{
-  console.log(req.body);
-  res.json({status:true});
+  addstucourse(req.session.user,req.body).then((response)=>{
+    if(response==false){
+      res.json({status:false});
+    }
+    else{
+      res.json({status:true});
+    }
+  });
 
 });
 
 
 router.get("/updatestudent",(req,res)=>{
   if(req.session.login==true){
-    res.render("dashboard",{updatestudent:true});
+    console.log(req.query.id)
+    getstudent(req.session.user,req.query.id).then((response)=>{
+      console.log(response)
+      if(response!=false){
+        res.render("dashboard",{updatestudent:true,student :response[0],guardian : response[1],enroll : response[2],prev : response[3],courses:response[4],pay : response[5] });
+      }
+      else{
+        res.redirect("/students");
+      }
+    });
+    
   }
   else{
     res.redirect("/");
@@ -268,9 +311,23 @@ router.get("/updatestudent",(req,res)=>{
 });
 
 router.post("/addpayment",(req,res)=>{
-  console.log(req.body);
-  res.json({status:true});
+  if(req.session.login==true){
+    addpayment(req.session.user,req.body).then((response)=>{
+      console.log(response)
+      res.json({status:response});
+    });
+  }
+  
 });
+
+router.post("/updateguardian",(req,res)=>{
+  updateguardian(req.session.user,req.body).then((response)=>{
+    
+    res.json({status : response});
+  });
+});
+
+
 
 
 

@@ -32,7 +32,9 @@
 <div id="successalertDelete" hidden>Category deleted successfully!</div>
 <div id="erroralertDelete" hidden>Error deleting category. Please try again.</div>
 
+
 <nav class="navbar navbar-light justify-content-between">
+    <h2>Student List</h2>
     <div class="container-fluid d-flex justify-content-center">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
@@ -68,6 +70,7 @@ add td element
 <!--dummy elements over-->
 
 <div class="container scrollable-container">
+    
     <div class="table-responsive-sm">
         <center>
     <table class="table  table-light table-hover" style="width: 90%;">
@@ -98,18 +101,21 @@ add td element
                 </td>
                 <td>
                     {{this.attendance}}
-                    <a href="">Detailed View</a>
+                    <a href="" style="color: rgb(77, 77, 218);">Detailed View</a>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#updatecategorymodal" id="{{this.name}}modal" onclick="update(this.id)">
+                    <a href="/updatestudent?id={{this.adminNo}}" class="btn btn-dark">
                         <i class="fs-4 bi-pencil-square"></i>
-                    </button>
-                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this.name}}del" onclick="del(this.id)">
-                        <i class="fs-4 bi-trash"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" >
+                    </a>
+                    &nbsp;
+                    <button type="button" class="btn btn-dark">
                         <i class="fs-4 bi-star"></i>
                     </button>
+                    &nbsp;
+                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this._id}}del" onclick="del(this.id)">
+                        <i class="fs-4 bi-trash"></i>
+                    </button>
+                    
                 </td>
             {{/if}}
             {{/each}}
@@ -136,10 +142,10 @@ add td element
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="/deleteCategory" method="post">
+      <form action="/deleteStudent" method="post">
       <div class="modal-body">
         <center>
-            <input type="text" name="name" id="delname" style="display: none;">
+            <input type="text" name="id" id="delname" style="display: none;">
             <h2>
             Confirm your deletion
             </h2>

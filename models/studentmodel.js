@@ -16,10 +16,10 @@ const studentSchema = mongoose.Schema(
       type: String,
     },
     dateOfAdmission: {
-      type: Date,
+      type: String,
     },
     dob: {
-      type: Date,
+      type: String,
     },
     age: {
       type: Number,

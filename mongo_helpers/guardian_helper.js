@@ -14,7 +14,8 @@ module.exports = {
                         email : data['email'],
                         whatsapp : data['whatsapp'],
                         student : data['student'],
-                    })
+                    });
+                    resolve(true);
                 }
                 else{
                     resolve(false);

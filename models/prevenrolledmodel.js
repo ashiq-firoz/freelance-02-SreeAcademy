@@ -25,4 +25,4 @@ const prevenrolledSchema = mongoose.Schema(
 );
 
 const PrevEnrolled = mongoose.model("PrevEnrolled", prevenrolledSchema);
-module.exports = Enrolled;
+module.exports = PrevEnrolled;

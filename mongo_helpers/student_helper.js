@@ -2,8 +2,24 @@ const Student = require("../models/studentmodel");
 const Enroll = require("../models/enrolledmodel");
 const PreEnroll = require("../models/prevenrolledmodel");
 const Guardian = require("../models/guardianmodel");
+const Course = require("../models/coursemodel");
+const Payment = require("../models/paymentmodel");
 
 module.exports = {
+    
+    getstudents : (user)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                let students = await Student.find({user: user});
+                resolve(students);
+            }
+            catch(err)
+            {
+                resolve(false);
+            }
+        });
+    },
+
     addstudent : (user,data)=>{
         return new Promise(async(resolve,reject)=>{
             try{
@@ -170,16 +186,23 @@ module.exports = {
     getstudent : (user,data)=>{
         return new Promise(async (resolve,reject)=>{
             try{
-                const students = await Student.findOne({user:user,admissionNo:data['admno']});
+                //console.log(data)
+                const students = await Student.findOne({user:user,adminNo:data});
 
-                const guardian = await Guardian.findOne({user:user,student:data['admno']});
+                const guardian = await Guardian.findOne({user:user,student:data});
 
-                const enroll = await Enroll.find({user:user,admissionNo:data['admno']});
+                const enroll = await Enroll.find({user:user,admissionNo:data});
 
-                const prev = await PreEnroll.find({user:user,admissionNo:data['admno']});
+                const prev = await PreEnroll.find({user:user,admissionNo:data});
+
+                const courses = await Course.find({user:user});
+
+                const payment = await Payment.find({user:user,student : data});
+
+                // console.log(students)
 
 
-                resolve([students,guardian,enroll,prev]);
+                resolve([students,guardian,enroll,prev,courses,payment]);
             }
             catch(err){
                 resolve(false);
@@ -187,15 +210,17 @@ module.exports = {
         });
     },
 
-    addcourse : (user,data)=>{
+    addstucourse : (user,data)=>{
         return new Promise (async(resolve,reject)=>{
             try{
                 let c = await Enroll.create({
                     user:user,
                     name : data['name'],
                     admissionNo : data['admno'],
-                    course : data['selected'],
+                    course : data['course'],
                 });
+
+                console.log(c)
 
                 resolve(true);
             }
@@ -228,6 +253,26 @@ module.exports = {
         });
     },
 
-    
-
+    addpayment : (user,data)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                console.log("data")
+                console.log(data)
+                const p = await Payment.create({
+                    user : user,
+                    student : data['admno'],
+                    amount : data['amount'],
+                    reciptno : data['receiptNo'],
+                    balance : data['due'],
+                    date : data['date'],
+                })
+                console.log(p);
+                resolve(true);
+            }
+            catch(err){
+                console.log(err);
+                resolve(false);
+            }
+        });
+    }
 }
