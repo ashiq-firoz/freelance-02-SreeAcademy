@@ -7,6 +7,9 @@ const teacherSchema = mongoose.Schema(
       required: [true, "Please add user"],
       trim: true,
     },
+    code : {
+      type : String,
+    },
     name: {
       type: String,
       required: [true, "Please add name"],
@@ -15,12 +18,11 @@ const teacherSchema = mongoose.Schema(
     start_date: {
       type: String,
     },
-    resigning_date: {
-      type: String,
-      default : "None",
-    },
     dob: {
-      type: Date,
+      type: String,
+    },
+    course : {
+      type : String,
     },
     age: {
       type: Number,
@@ -29,8 +31,13 @@ const teacherSchema = mongoose.Schema(
       type: String,
     },
     attendance: {
-      type: String,
+      type: Number,
+      default : 0
     },
+    noofclass :{
+      type : Number,
+      default : 0,
+    }
    
   },
   {

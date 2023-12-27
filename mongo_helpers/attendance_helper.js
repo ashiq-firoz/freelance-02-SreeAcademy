@@ -2,6 +2,7 @@ const Attendance = require('../models/attendancemodel');
 const Enroll = require("../models/enrolledmodel");
 const Course = require("../models/coursemodel");
 const Student = require("../models/studentmodel");
+const { use } = require('../routes');
 
 
 module.exports = {
@@ -9,8 +10,16 @@ module.exports = {
         return new Promise(async(resolve, reject) => {
            try{
             var list = data['present'];
+            
 
-            for (var item in list) {
+            if(!Array.isArray(list)){
+              list = [list]
+            }
+            //console.log(list)
+
+            for (i =  0; i<list.length;i++) {
+              const item = list[i]; 
+              //console.log(item)
                 // Extract numeric part
                 let numericPart = item.match(/\d+/);
 
@@ -22,61 +31,56 @@ module.exports = {
                 textPart = textPart ? textPart[0] : null;
 
                 let courses ;
-
-                await Enroll.find({ user: user,admissionNo:numericPart }, (err, enrolledCourses) => {
-                    if (err) {
-                      console.error(err);
-                      return;
-                    }
-                  
-                    // Extract the list of courses from the enrolledCourses array
-                    courses = enrolledCourses.map(course => course.course);
-                  });
+                //console.log(numericPart);
+                const enrolledCourses =  await Enroll.find({ user: user,admissionNo:numericPart });
+              
+                courses = enrolledCourses.map(course => course.course);
+                //console.log(enrolledCourses);
+                //console.log(courses);
                 
-                let sum;
-
-                await  Course.aggregate([
-                    {
-                      $match: {
-                        name: { $in: courses },
-                      },
+                const sumResult = await Course.aggregate([
+                  {
+                    $match: {
+                      name: { $in: courses },
                     },
-                    {
-                      $group: {
-                        _id: null,
-                        totalNoOfClass: { $sum: "$noOfClass" },
-                      },
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalNoOfClass: { $sum: "$noOfClass" },
                     },
-                  ]).exec((err, result) => {
-                    if (err) {
-                      console.error(err);
-                      return;
-                    }
-                  
-                    // Result will be an array containing the sum of noOfClass for the specified courses
-                    sum = result.length > 0 ? result[0].totalNoOfClass : 0;
-                  });
-
+                  },
+                ]).exec();
+                
+                // Result will be an array containing the sum of noOfClass for the specified courses
+               var sum = sumResult.length > 0 ? sumResult[0].totalNoOfClass : 0;
+                
+               console.log(sum)
+                
                 sum += 1
 
                 const stu = await Student.findOne({user:user,adminNo:numericPart});
 
-                const classes = stu.totalnoofclass; 
+                var classes = stu.totalnoofclass; 
 
                 if(textPart=="present"){
                     classes += 1
-                    let attend = (classes/sum)*100;
-
-                    await Student.findByIdAndUpdate(
-                        {
-                            _id:stu._id,
-                        },
-                        {
-                            attendance : attend,
-                            totalnoofClass : classes,
-                        }
-                    )
+                    await Attendance.create({user:user,admissionNo:numericPart,course : data['course'],present:true,date:data['date']});
                 }
+                else{
+                  await Attendance.create({user:user,admissionNo:numericPart,course : data['course'],present:false,date:data['date']});
+                }
+                let attend = (classes/sum)*100;
+
+                await Student.findByIdAndUpdate(
+                    {
+                        _id:stu._id,
+                    },
+                    {
+                        attendance : attend,
+                        totalnoofClass : classes,
+                    }
+                );
             }
 
             const course = await Course.findOne({user:user,name : data['course']});
@@ -112,6 +116,18 @@ module.exports = {
                 resolve(false);
             }
         });
+    },
+
+    getstudattendancedetail : (user,admno)=>{
+      return new Promise(async(resolve,reject)=>{
+        try{
+          const data = await Attendance.find({user:user,admissionNo:admno,teacher:false});
+          resolve(data);
+        }
+        catch(err){
+          resolve(false)
+        }
+      });
     }
 
 }

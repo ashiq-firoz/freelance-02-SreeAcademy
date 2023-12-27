@@ -13,10 +13,13 @@ const {
   verifyuser,
   updateuser,
   getuser,
+  addevent,
+  getevents,
+  getreminder,
 } = require('../mongo_helpers/user_helper');
 
 const {
- getstudentsforattendance, addattendance,
+ getstudentsforattendance, addattendance, getstudattendancedetail, addteacherattendance,
 } = require("../mongo_helpers/attendance_helper");
 
 const { addguardian, updateguardian } = require('../mongo_helpers/guardian_helper');
@@ -34,9 +37,9 @@ const {
   addstupayment,
 } = require("../mongo_helpers/student_helper");
 
-const {
-
-} = require("../mongo_helpers/teacher_helper");
+const { addteacher, getteacherattendance } = require("../mongo_helpers/teacher_helper");
+const { getawards, getawards2, addEventdata, addMultiData, addNewEvent, addMultidata2, addEventdata2 } = require('../mongo_helpers/award_helper');
+const { getchartdata } = require('../mongo_helpers/dashboard_helper');
 
 
 /* GET home page. */
@@ -77,7 +80,10 @@ router.post("/register", (req, res) => {
 
 router.get("/dashboard", (req, res) => {
   if (req.session.login == true) {
-    res.render('dashboard')
+    getchartdata(req.session.user).then((response)=>{
+      res.render('dashboard',{dashboard:true,prevrev:response[0],currentrev:response[1],attendance:response[2],attendval:response[3],current:JSON.stringify(response[4]),prev:JSON.stringify(response[5])})
+    })
+    
   }
   else {
     res.redirect('/');
@@ -153,7 +159,15 @@ router.get("/attendance",(req,res)=>{
 
 router.get("/calendar",(req,res)=>{
   if(req.session.login==true){
-    res.render("dashboard",{calendar:true});
+    getevents(req.session.user).then((response)=>{
+      if(response==false){
+        res.render("dashboard",{calendar:true});
+      }
+      else{
+      res.render("dashboard",{calendar:true,data:response});
+      }
+    })
+    
   }
   else{
     res.redirect("/");
@@ -333,6 +347,7 @@ router.post("/updateguardian",(req,res)=>{
 router.post("/addattendance",(req,res)=>{
   if(req.session.login==true){
     addattendance(req.session.user,req.body).then((response)=>{
+      console.log(response);
       res.redirect("/attendance");
     });
   }
@@ -341,8 +356,153 @@ router.post("/addattendance",(req,res)=>{
   }
 });
 
+router.get("/detailedview",(req,res)=>{
+  if(req.session.login==true){
+    getstudattendancedetail(req.session.user,req.query.id).then((response)=>{
+      if(response==false){
+        res.redirect('/students');
+      }
+      else{
+        res.render("dashboard",{detailed : true, data:response});
+      }
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.post("/addteacher",(req,res)=>{
+  if(req.session.login==true){
+    addteacher(req.session.user,req.body).then((response)=>{
+      res.redirect('/teachers');
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.post("/addteacherattendance",(req,res)=>{
+  if(req.session.user==true){
+    addteacherattendance(req.session.user,req.body).then((response)=>{
+      res.redirect("/teachers");
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.get("/detailedteacherview",(req,res)=>{
+  if(req.session.user==true){
+    getteacherattendance(req.session.user,req.query.id).then((response)=>{
+      res.render("dashboard",{detailed:true,data:JSON.stringify(response)});
+    });
+  }
+  else{
+    res.redirect("/");
+  }
+});
 
 
+router.post('/addevent',(req,res)=>{
+  if(req.session.login==true){
+    addevent(req.session.user,req.body).then((response)=>{
+      res.redirect("/calendar");
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.get("/reminders",(req,res)=>{
+  if(req.session.login==true){
+    getreminder(req.session.user).then((response)=>{
+      console.log(response)
+      if(response==false){
+        res.json({data : []})
+      }
+      else{
+        res.json({data:response});
+      }
+    });
+  }
+  else{
+    res.redirect("/");
+  }
+});
+
+router.get("/awards",(req,res)=>{
+  if(req.session.login==true){
+    getawards(req.session.user,req.query.name).then((response)=>{
+      res.render("dashboard",{cultural:true,data:response,event:req.query.name});
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.get("/award2",(req,res)=>{
+  if(req.session.login==true){
+    getawards2(req.session.user).then((response)=>{
+       res.render("dashboard",{award2:true,data:response,event:"2"});
+    });
+  }
+  else{
+    res.redirect('/');
+  }
+});
+
+router.post("/addaward",(req,res)=>{
+  if(req.session.login==true){
+    //console.log(req.body);
+    if(Array.isArray(req.body["date"])){
+      addMultiData(req.session.user,req.body['event'],req.body).then((response)=>{
+        res.redirect("/awards?name="+req.body['event']);
+      });
+    }
+    else{
+      addEventdata(req.session.user,req.body['event'],req.body).then((response)=>{
+        res.redirect("/awards?name="+req.body['event']);
+      });
+    }
+ }
+ else{
+  res.redirect('/');
+ }
+});
+
+router.post("/addaward2",(req,res)=>{
+  if(req.session.login==true){
+    if(Array.isArray(req.body["date"])){
+      addMultidata2(req.session.user,req.body).then((response)=>{
+        res.redirect("/award2");
+      });
+    }
+    else{
+      addEventdata2(req.session.user,req.body).then((response)=>{
+        res.redirect("/award2");
+      });
+    }
+  }
+  else{
+    res.redirect("/");
+  }
+});
+
+router.post("/addNewEvent",(req,res)=>{
+  if(req.session.user==true){
+    addNewEvent(req.session.user,req.body['event']).then((response)=>{
+      res.redirect("/cultural");
+    });
+  }
+  else{
+    res.redirect("/");
+  }
+});
 
 
 module.exports = router;

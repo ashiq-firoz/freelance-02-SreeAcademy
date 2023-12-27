@@ -67,6 +67,7 @@ add td element
 {{/each}}
 {{/each}}
 
+
 <!--dummy elements over-->
 
 <div class="container scrollable-container">
@@ -76,10 +77,9 @@ add td element
     <table class="table  table-light table-hover" style="width: 90%;">
         <thead>
             <tr>
-                <th scope="col">Admission No</th>
-                <th scope="col">Name</th>
-                <th scope="col">Attendance %</th>
-                <th scope="col">Option</th>
+                <th scope="col">Course</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody id="mainbody">
@@ -87,36 +87,26 @@ add td element
             
             
             {{#each this}}
-            {{#if this.name}}
-            <tr id="{{this.name}}">
+            {{#if this.course}}
+            <tr id="{{this.course}}">
                 
                 <input type="text"  name="id" style="display: none;" value="{{this._id}}">
                 <td>
-                    <input type="text" id="{{@../index}}" name="adminNo" style="display: none;" value="{{this.adminNo}}">
-                    {{this.adminNo}}
-                </td>
-                <td>
-                    <input type="text"  name="name" style="display: none;" value="{{this.name}}">
-                    {{this.name}}
-                </td>
-                <td>
-                    {{this.attendance}}
-                    <a href="/detailedview?id={{this.adminNo}}" style="color: rgb(77, 77, 218);">Detailed View</a>
-                </td>
-                <td>
-                    <a href="/updatestudent?id={{this.adminNo}}" class="btn btn-dark">
-                        <i class="fs-4 bi-pencil-square"></i>
-                    </a>
-                    &nbsp;
-                    <button type="button" class="btn btn-dark">
-                        <i class="fs-4 bi-star"></i>
-                    </button>
-                    &nbsp;
-                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this._id}}del" onclick="del(this.id)">
-                        <i class="fs-4 bi-trash"></i>
-                    </button>
                     
+                    {{this.course}}
                 </td>
+                <td>
+                   
+                    {{this.date}}
+                </td>
+                <td>
+                    {{#if this.present}}
+                    <span class="text-success">Present</span> 
+                    {{else}}
+                    <span class="text-danger">Absent</span> 
+                    {{/if}}
+                </td>
+                
             {{/if}}
             {{/each}}
             </tr>

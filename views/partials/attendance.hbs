@@ -13,8 +13,11 @@
             <div class="card">
                 <img class="card-img-top" style="height: 10rem;" src="/img/squ.jpeg" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title">{{this.name}}</h5>
-                    <a href="/takeattendance?name={{this.name}}" class="btn btn-success">Take Attendance</a>
+                    <h5 class="card-title">{{this.name}}</h5> 
+                    <div class="row">
+                    <a href="/takeattendance?name={{this.name}}" class="btn btn-success">Take Attendance</a> &nbsp;&nbsp;
+                    Total No of Class : {{this.noOfClass}}
+                    </div>
                 </div>
             </div>
         </div>

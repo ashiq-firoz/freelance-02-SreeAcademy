@@ -12,6 +12,8 @@
     </style>
 
 <br>
+
+<input type="text" id="data" value="{{data}}" hidden>
 <div class="container">
     <div id="calendar"></div>
     <div id="event-details">
@@ -64,6 +66,47 @@
     </div>
 </div>
 
+<!-- Add this script tag within the HTML file -->
+<script>
+    function submitForm() {
+        // Get form data
+        const form = document.getElementById('addform');
+        const formData = new FormData(form);
+
+        // Convert FormData to JSON object
+        const jsonData = {};
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Make a fetch request
+        fetch('/addevent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle success, if needed
+            
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            // Handle error
+            console.error('Error:', error);
+        });
+        window.location.reload();
+    }
+</script>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -72,6 +115,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/gcal.min.js"></script>
 
 <script>
+    var data = [{{{data}}}];
+    console.log(data)
+    const Events = data;
     $(document).ready(function () {
         $('#calendar').fullCalendar({
             header: {
@@ -79,18 +125,7 @@
                 center: 'title',
                 right: 'month,basicWeek,basicDay'
             },
-            events: [
-                {
-                    title: 'Event 1',
-                    start: '2023-12-01'
-                },
-                {
-                    title: 'Event 2',
-                    start: '2023-12-10',
-                    end: '2023-12-12'
-                },
-                // Add more events as needed
-            ],
+            events: Events,
             dayClick: function (date, jsEvent, view) {
                 // Handle day click event
                 showEventDetails(date.format());
@@ -99,12 +134,7 @@
 
         function showEventDetails(selectedDate) {
             // Example: Array of events (replace with your actual data)
-            const events = [
-                { title: 'Event 1', start: '2023-12-01' },
-                { title: 'Event 3', start: '2023-12-01' },
-                { title: 'Event 2', start: '2023-12-10', end: '2023-12-12' },
-                // Add more events as needed
-            ];
+            const events = Events;
 
             // Filter events for the selected date
             const selectedEvents = events.filter(event => event.start === selectedDate);

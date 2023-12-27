@@ -80,14 +80,14 @@
 <div class="container scrollable-container">
     <div class="table-responsive-sm">
         <center>
-  <form action="/addaward" method="post">
+  <form action="/addaward2" method="post">
     <table class="table  table-light table-hover" style="width: 90%;">
         <thead>
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Venue</th>
-                <th scope="col">Awardee</th>
-                <th scope="col">Award Name</th>
+                <th scope="col">Participant Name</th>
+                <th scope="col">Accompanying Artists</th>
 
             </tr>
         </thead>
@@ -95,8 +95,8 @@
         <tbody id="tableBody">
             {{#each data}}
             {{#each this}}
-            {{#if this.event}}
-            <tr id="{{this.event}}">
+            {{#if this.date}}
+            <tr id="{{this.date}}">
                 
               
                 <td>
@@ -110,7 +110,7 @@
                     {{this.awardee}}
                 </td>
                 <td>
-                     {{this.awardName}}
+                     {{this.artists}}
                 </td>
             {{/if}}
             {{/each}}
@@ -149,12 +149,12 @@
     const awardeeInput = document.createElement('input');
     awardeeInput.type = 'text';
     awardeeInput.name = "awardee"
-    awardeeInput.placeholder = "Awardee"
+    awardeeInput.placeholder = "Participant"
     awardeeInput.className = 'form-control';
     const awardnameInput = document.createElement('input');
     awardnameInput.type = 'text';
-    awardnameInput.name = "awardname";
-    awardnameInput.placeholder = "Award name"
+    awardnameInput.name = "artists";
+    awardnameInput.placeholder = "Artists"
     awardnameInput.className = 'form-control';
 
     // Append input elements to the cells

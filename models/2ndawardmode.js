@@ -12,21 +12,14 @@ const awardListSchema = mongoose.Schema(
       required: [true, "Please add name"],
       trim: true,
     },
-    event: {
-      type: String,
-      required: [true, "Please add event"],
-      trim: true,
-    },
-    awardName: {
-      type: String,
-      required: [true, "Please add awardName"],
-      trim: true,
-    },
     date:{
       type : String,
     },
     venue : {
       type : String,
+    },
+    artists : {
+        type : String,
     },
   },
   {
@@ -34,5 +27,5 @@ const awardListSchema = mongoose.Schema(
   }
 );
 
-const AwardList = mongoose.model("AwardList", awardListSchema);
+const AwardList = mongoose.model("2ndAwardList", awardListSchema);
 module.exports = AwardList;

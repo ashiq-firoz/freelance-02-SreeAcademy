@@ -13,14 +13,10 @@ const attendanceSchema = mongoose.Schema(
       default : "All"
     },
     date: {
-      type: Date,
+      type: String,
       required: [true, "Please add date"],
     },
-    name: {
-      type: String,
-      required: [true, "Please add studentName"],
-      trim: true,
-    },
+    
     admissionNo: {
       type: String,
       required: [true, "Please add admissionNo"],
