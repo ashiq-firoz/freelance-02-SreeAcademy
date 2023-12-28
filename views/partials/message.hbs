@@ -12,6 +12,10 @@
 
 </style>
 
+ <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+
+
 <div class="alert alert-warning" role="alert" id="sendalert" hidden="true">
                     Adding Category..
 </div>
@@ -42,13 +46,26 @@
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
        
-        {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
-        &nbsp; &nbsp; &nbsp; 
-        <button type="button" class="btn btn-dark" style="color:white" data-toggle="modal" data-target="#addcategorymodal">
-            <i class="fs-4 bi-plus-lg"></i><span class="ms-1 d-none d-sm-inline">&nbsp;Add new </span>
-        </button>
     </div>
 </nav>
+
+
+<script>
+    // Get the select element by its id
+    var selectElement = document.getElementById("selectList");
+
+    // Add an event listener to the select element
+    selectElement.addEventListener("change", function () {
+        // Get the selected option
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+
+        // Check if the selected option is "Starred List"
+        if (selectedOption.value === "star") {
+            // Redirect to the specified link "/do"
+            window.location.href = "/starred";
+        }
+    });
+</script>
 
 
 <!--
@@ -59,13 +76,10 @@ add td element
 <input type="text"  name="clonein" style="display: none;" value="">
 
 <!--data storing dummy elements--> 
-{{#each data}}
+{{#each guardian}}
 {{#each this}}
-{{#if this.name}}
-<input type="text"  id="id{{this.name}}" name="id" style="display: none;" value="{{this._id}}">
-<input type="text"  id="category{{this.name}}" name="category" style="display: none;" value="{{this.name}}">
-<input type="text"  id="regional{{this.name}}" name="regional" style="display: none;" value="{{this.regional_name}}">
-<input type="text"  id="active{{this.name}}" name="active" style="display: none;" value="{{this.status}}">
+{{#if this.parent}}
+<input type="text"  id="id{{this.student}}" name="id" style="display: none;" value="{{this.whatsapp}}">
 {{/if}}
 {{/each}}
 {{/each}}
@@ -101,11 +115,8 @@ add td element
                     {{this.name}}
                 </td>
                 <td>
-                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this.name}}del" onclick="del(this.id)">
-                        <i class="fs-4 bi-trash"></i>
-                    </button>
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" >
-                        <i class="fs-4 bi-star"></i>
+                        <i class="fs-4 bi-circle" id="{{this.adminNo}}" onclick="add(this.id)">Select</i>
                     </button>
                 </td>
             {{/if}}
@@ -120,6 +131,33 @@ add td element
     </div>
 </div>
 
+<form action="/sendmessage" method="post">
+   <div id="add-form">
+
+   </div>
+   <textarea name="message"  cols="30" rows="5" class="form-controll"></textarea>
+   <button class="btn btn-primary" type="submit">Send</button>
+</form>
+
+<script>
+    function addHiddenInput(customValue) {
+        // Create a new input element
+        var inputElement = document.createElement("input");
+
+        customValue = document.getElementById("id"+customValue).value;
+
+        // Set the type and name of the input
+        inputElement.type = "hidden";
+        inputElement.name = "no";
+
+        // Set the value of the input to the custom value passed in the function
+        inputElement.value = customValue;
+
+        // Append the input element to the form
+        document.getElementById("add-form").appendChild(inputElement);
+    }
+</script>
+    
 <hr>
 
 

@@ -1,0 +1,186 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <br><br>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card" style="background: linear-gradient(90deg, #003E7B 0%, rgba(0, 92, 184, 0.633633) 97.15%, rgba(0, 127, 255, 0) 97.16%, rgba(0, 86, 172, 0.707585) 97.16%);color:white">
+                        <div class="card-body">
+                            <h5 class="card-title">Fee Collected This Month</h5>
+                            <center>
+                            <p class="card-text text-success" style="font-size: x-large;">₹ {{currentrev}}
+                            </p>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                     <div class="card" style="background: linear-gradient(90deg, #003E7B 0%, rgba(0, 92, 184, 0.633633) 97.15%, rgba(0, 127, 255, 0) 97.16%, rgba(0, 86, 172, 0.707585) 97.16%);color:white">
+                        <div class="card-body">
+                            <h5 class="card-title">Fee Pending  &nbsp; &nbsp;</h5>
+                            <center>
+                            <p class="card-text text-danger" style="font-size: x-large;">₹ {{due}}
+                            </center>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>     
+                
+            <div class="col-sm-6">
+
+                 <div class="card" style="background-color: rgb(34, 30, 30);color: white;">
+                        <div class="card-body">
+                            <h5 class="card-title">This Month Revenue</h5>
+                            <p class="card-text text-primary" style="font-size: x-large;">₹ {{currentrev}} &nbsp;&nbsp;(<span>{{increase}}</span>)
+                            </p>
+                        </div>
+                </div>
+                
+            </div>
+           
+        </div>
+        <div class="col-md-6">
+            <div id="chart">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <hr>
+       <center>
+        Todays Attendance
+       </center>
+    <hr>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <th scope="cols">Course</th>
+                </thead>
+                <tbody  id="coursesBody">
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <th scope="cols">Ratio</th>
+                </thead>
+                <tbody>
+                    {{#each attendval}}
+                    <tr>
+                        <td>{{this}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                    <th scope="cols">Attendance %</th>
+                </thead>
+                <tbody>
+                    {{#each Attendance}}
+                    <tr>
+                        <td>{{this}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    
+</div>
+
+
+
+<script>
+   var courses = {{{Courses}}};
+
+
+    // Get the table body element
+    var tableBody = document.getElementById("coursesBody");
+
+    // Iterate through the courses array and create a row for each course
+    courses.forEach(function(course) {
+        // Create a new row
+        var row = tableBody.insertRow();
+
+        // Create a cell in the row
+        var cell = row.insertCell(0);
+
+        // Add the course text to the cell
+        cell.innerHTML = course;
+    });
+
+   var options = {
+          series: [{
+          name: 'Previous Month',
+          data: {{{prev}}}
+        }, {
+          name: 'Current Month',
+          data: {{{current}}}
+        },],
+          chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            endingShape: 'rounded'
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: {{{Courses}}},
+        },
+        yaxis: {
+          title: {
+            text: 'Overall Attendance %'
+          },
+          tickAmount: 5, // Adjust this value based on your requirement
+          min: 0,
+          max: 100,
+          labels: {
+          formatter: function (val) {
+           return val + "%";
+           }
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return  val + " %"
+            }
+          }
+        },
+        colors: ['#74b9ff', '#0984e3']
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+      
+      
+    
+</script>

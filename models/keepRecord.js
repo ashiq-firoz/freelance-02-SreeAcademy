@@ -17,9 +17,16 @@ const recordSchema = mongoose.Schema(
     teacherattendance : {
         type : Number,
         trim : true,
+        default : 0,
     },
+    totaldue : {
+      type : Number,
+      default : 0,
+    },
+    startdate : {
+      type : String,
+    }
 
-    
   },
   {
     timestamps: true,

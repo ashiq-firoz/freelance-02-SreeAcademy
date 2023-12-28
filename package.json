@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "electron main.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "~1.4.4",
     "date-fns": "^3.0.6",
     "debug": "~2.6.9",
+    "electron": "^28.1.0",
     "express": "^4.18.2",
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
@@ -19,6 +20,8 @@
     "mongoose": "^8.0.3",
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "twilio": "^4.20.0",
+    "wbm": "^1.1.16"
   }
 }

@@ -8,7 +8,9 @@ module.exports = {
             try {
                 const cou = await Course.find({ user: user });
 
-                const courses = cou.map(entry => entry.course);
+                const courses = cou.map(entry => entry.name);
+
+                //console.log(courses);
 
                 let attendance = [];
                 let attendval  = [];
@@ -20,7 +22,7 @@ module.exports = {
                     let dates = await Attendance.distinct("date", { course: courses[i] });
                     // Get the current date
                     let currentDate = new Date();
-
+                    let val = 0;
 
                     // Filter dates for the current date
                     const currentDateCount = dates.filter(date => {
@@ -54,6 +56,7 @@ module.exports = {
                     const prevtotal = countInPrevMonth;
 
                     dates = await Attendance.distinct("date", { course: courses[i], present: true });
+                    //console.log(dates);
                     // Get the current date
                     currentDate = new Date();
 
@@ -85,24 +88,61 @@ module.exports = {
                     // Get the count of dates in the current month and previous month
                     countInCurrentMonth = datesInCurrentMonth.length;
                     countInPrevMonth = datesInPrevMonth.length;
+                    
+                    if(currenttotal==0){
+                        val = 0
+                    }
+                    else{
+                        val = (countInCurrentMonth / currenttotal) * 100
+                    }
+                    const currentattend = val;
 
-                    const currentattend = (countInCurrentMonth / currenttotal) * 100
-                    const prevattendance = (countInPrevMonth / prevtotal) * 100
+                    if(prevtotal==0){
+                        val = 0;
+                    }
+                    else{
+                        val = (countInPrevMonth / prevtotal) * 100
+                    }
+                    const prevattendance = val;
 
                     current.push(currentattend);
                     prev.push(prevattendance);
 
-                    attendance.push((currentDatePresentCount/currentDateCount)*100);
-                    attendval.push((currentDatePresentCount/currentDateCount));
+                    console.log(currentDatePresentCount)
+                    console.log(currentDateCount)
+                    
+                    if(currentDateCount==0){
+                        val = 0
+                    }          
+                    else{
+                        val = (currentDatePresentCount/currentDateCount)*100
+                    }          
+
+                    attendance.push(val);
+
+                    attendval.push(currentDatePresentCount+"/"+currentDateCount);
 
                 }
 
                 const prevrev  = await Default.findOne({user:user});
 
-                resolve([prevrev.prevmonth,prevrev.thismonth,attendance,attendval,current,prev]);
+                let increase = (prevrev.thismonth - prevrev.prevmonth)
+
+                if(prevrev.prevmonth==0){
+                    increase = "+ 0 %"
+                }
+                else if(increase<0){
+                    increase = "-"+(Math.abs(increase)/(prevrev.prevmonth)*100)+" %";
+                }
+                else{
+                     increase = "+" + ((increase/prevrev.prevmonth)*100) + " %";
+                }
+
+                resolve([increase,prevrev.thismonth,attendance,attendval,current,prev,courses,prevrev.totaldue]);
 
             }
             catch (err) {
+                console.log(err)
                 resolve(false);
             }
         });
