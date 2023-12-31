@@ -11,6 +11,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 let students = await Student.find({ user: user });
+                
                 resolve(students);
             }
             catch (err) {
@@ -119,13 +120,14 @@ module.exports = {
     changewatchlist: (user, data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const stu = await Student.findOne({ user: user, adminNo: data['admno'] });
+                const stu = await Student.findOne({ user: user, adminNo: data });
                 let st = true;
-                if (data['status'] == "t") {
-                    st = true;
-                }
-                else {
+                
+                if(stu.watchList==true){
                     st = false;
+                }
+                else{
+                    st = true;
                 }
                 if (stu == null) {
                     resolve(false);
@@ -144,6 +146,7 @@ module.exports = {
                 }
             }
             catch (err) {
+                console.log(err);
                 resolve(false);
             }
         });
@@ -154,12 +157,20 @@ module.exports = {
             try {
                 const stu = await Student.findOne({ user: user, adminNo: data['admno'] });
                 let st = true;
-                if (data['status'] == "t") {
+                if (data['status'] == "true") {
                     st = true;
                 }
                 else {
                     st = false;
                 }
+
+                if(stu.star==true){
+                    st = false;
+                }
+                else{
+                    st = true;
+                }
+
                 if (stu == null) {
                     resolve(false);
                 }
@@ -173,11 +184,26 @@ module.exports = {
                         }
                     );
 
-                    resolve(true);
+                    resolve([true,!st]);
                 }
             }
             catch (err) {
                 resolve(false);
+            }
+        });
+    },
+
+    getwatchliststudents : (user)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                const students = await Student.find({user:user,watchList:true});
+
+                resolve(students);
+            }
+            catch(err)
+            {
+                console.log(err)
+                resolve(null);
             }
         });
     },
@@ -196,12 +222,49 @@ module.exports = {
 
                 const courses = await Course.find({ user: user });
 
+                const courselist = enroll.map(enroll => enroll.course);
+
+
+                const result = await Course.aggregate([
+                    {
+                      $match: { user: user ,name: { $in: courselist }}
+                    },
+                    {
+                      $group: {
+                        _id: null,
+                        totalFees: { $sum: '$fee' } // Replace 'fee' with the actual field name containing the fees
+                      }
+                    }
+                  ]);
+                
+                // Access the total sum of fees from the result
+                let totalFees = result.length > 0 ? result[0].totalFees : 0;
+                console.log("sum : "+totalFees);
+
                 const payment = await Payment.find({ user: user, student: data });
+
+                if(payment!=null){
+                    let result = await Payment.aggregate([
+                        {
+                          $match: { user: user , student: data}
+                        },
+                        {
+                          $group: {
+                            _id: null,
+                            totalFees: { $sum: '$amount' } // Replace 'fee' with the actual field name containing the fees
+                          }
+                        }
+                      ]);
+                    
+                    // Access the total sum of fees from the result
+                    const totalamt = result.length > 0 ? result[0].totalFees : 0;   
+                    totalFees = totalFees - totalamt;
+                }
 
                 // console.log(students)
 
 
-                resolve([students, guardian, enroll, prev, courses, payment]);
+                resolve([students, guardian, enroll, prev, courses, payment,totalFees]);
             }
             catch (err) {
                 resolve(false);
@@ -312,6 +375,39 @@ module.exports = {
                 //console.log(err);
                 resolve(false);
             }
+        });
+    },
+
+    deleteStudent : (user,id)=>{
+        return new Promise (async(resolve,reject)=>{
+            try{
+                const stu = await Student.findOne({_id:id});
+
+            const admno = stu.adminNo;
+
+            await Student.deleteOne({_id:id});
+            
+            try{
+            await Guardian.deleteMany({student : admno});
+
+            await Enroll.deleteMany({admissionNo : admno});
+
+            await PreEnroll.deleteMany({admissionNo : admno});
+
+            await Payment.deleteMany({student : admno});
+
+            resolve(true);
+            }
+            catch(err){
+                console.log(err)
+                resolve(false);
+            }
+            }
+            catch(err){
+                console.log(err)
+                resolve(false);
+            }
+            
         });
     }
 }

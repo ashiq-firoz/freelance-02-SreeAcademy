@@ -38,9 +38,12 @@
 
 <nav class="navbar navbar-light justify-content-between">
     <div class="container-fluid d-flex justify-content-center">
-        <select class="form-control" style="width: 150px;">
+        <select class="form-control" style="width: 150px;" id="listSelector" onchange="redirect()">
+  <option value="">Select An Option</option>
   <option value="watch">Watch List</option>
   <option value="star">Starred List</option>
+  <option value="low">Students low on Attendance</option>
+  <option value="due">Students With due</option>
 </select> 
          &nbsp; &nbsp; &nbsp; 
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
@@ -51,42 +54,48 @@
 
 
 <script>
-    // Get the select element by its id
-    var selectElement = document.getElementById("selectList");
 
-    // Add an event listener to the select element
-    selectElement.addEventListener("change", function () {
-        // Get the selected option
-        var selectedOption = selectElement.options[selectElement.selectedIndex];
-
-        // Check if the selected option is "Starred List"
-        if (selectedOption.value === "star") {
-            // Redirect to the specified link "/do"
-            window.location.href = "/starred";
-        }
-    });
+     window.onload = function() {
+      // Your function code goes here
+      var c = {{{choice}}}
+      if(c!=null){
+        document.getElementById("listSelector").value  = c;
+      }
+      
+      
+    };
 </script>
 
+<script>
 
-<!--
-sample elements to clone
+    function redirect() {
+      var selectElement = document.getElementById("listSelector");
+      var selectedValue = selectElement.value;
 
-add td element
--->
-<input type="text"  name="clonein" style="display: none;" value="">
+      if (selectedValue == "watch") {
+        // Redirect to the watch link
+        window.location.href = "/getWatchlists";
 
-<!--data storing dummy elements--> 
-{{#each guardian}}
-{{#each this}}
-{{#if this.parent}}
-<input type="text"  id="id{{this.student}}" name="id" style="display: none;" value="{{this.whatsapp}}">
-{{/if}}
-{{/each}}
-{{/each}}
+      } else if (selectedValue == "star") {
+        // Redirect to the star link
+        window.location.href = "/getStarreds";
+      }
+      else if(selectedValue == "low"){
+        window.location.href = "/getLowattendances";
+      }
+      else  if(selectedValue == "due"){
+        window.location.href = "/getListwithdue";
+      }
+    }
+  </script>
+
+
+
+
 
 <!--dummy elements over-->
 
-<div class="container scrollable-container">
+<div class="container scrollable-container" style="height: min-content;">
     <div class="table-responsive-sm">
         <center>
     <table class="table  table-light table-hover" style="width: 90%;">
@@ -115,8 +124,8 @@ add td element
                     {{this.name}}
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" >
-                        <i class="fs-4 bi-circle" id="{{this.adminNo}}" onclick="add(this.id)">Select</i>
+                    <button type="button" class="btn btn-dark" id="{{this.adminNo}}" onclick="add(this.id)">
+                       Select
                     </button>
                 </td>
             {{/if}}
@@ -130,14 +139,18 @@ add td element
     </center>
     </div>
 </div>
-
-<form action="/sendmessage" method="post">
-   <div id="add-form">
-
-   </div>
-   <textarea name="message"  cols="30" rows="5" class="form-controll"></textarea>
-   <button class="btn btn-primary" type="submit">Send</button>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+                <div class="form-group text-center">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#deleteItemModal" >Send message</button>
+                </div>
+                {{!-- <div class="form-group text-center">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#qrCodeModal" onclick="fetchDataAndDisplayQRCode()">Connect to Whatsapp</button>
+                </div> --}}
+        </div>
+    </div>
+</div>
 
 <script>
     function addHiddenInput(customValue) {
@@ -160,34 +173,6 @@ add td element
     
 <hr>
 
-
-<!-- Delete Item Modal -->
-<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ModalLongTitle">Confirm Deletion</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form action="/deleteCategory" method="post">
-      <div class="modal-body">
-        <center>
-            <input type="text" name="name" id="delname" style="display: none;">
-            <h2>
-            Confirm your deletion
-            </h2>
-            </center>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-danger" >Delete</button>
-      </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 
 <script>
@@ -217,88 +202,182 @@ add td element
     }
 </script>
 
+
+
 <!-- Modal -->
-<div class="modal fade" id="addcategorymodal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="deleteItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalLongTitle">Create New Category</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Selected Items</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="" method="post" id="addform">
-                <div class="modal-body">
-
-                    <div class="form-group">
-                        <label for="formGroupInput">Category Name</label>
-                        <input type="text" class="form-control" id="formGInput" name="category" placeholder="Category"  required>
-                        {{!-- <label for="formGroupInput">Regional Name <i style="font-size:22px;" id="sp"></i></label>
-                        <input type="text" class="form-control" id="regional" name="regional"
-                            placeholder="Regional Name" required > --}}
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="active" value="check" id="defaultCheck1"
-                            checked required>
-                        <label class="form-check-label" for="defaultCheck1">
-                            Activate
-                        </label>
-                    </div>
-
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" onclick="submitForm()" data-dismiss="modal">Save changes</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Admission No</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedItemsTableBody">
+                        <!-- Selected items will be added here dynamically -->
+                    </tbody>
+                </table>
+                <textarea id="messageTextarea" class="form-control" placeholder="Enter your message"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="submitData()">Submit</button>
+            </div>
         </div>
     </div>
 </div>
 
 
-<!-- updateModal -->
-<div class="modal fade" id="updatecategorymodal" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<!-- Modal -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalLongTitle">Update Category</h5>
+                <h5 class="modal-title" id="exampleModalLabel">QR Code</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="/updateCategory" method="post" >
-                <div class="modal-body">
-                    <input type="text" class="form-control" id="idu" name="id"
-                            placeholder="Category Name" required hidden>
-                    <div class="form-group">
-                        <label for="formGroupInput">Category</label>
-                        <input type="text" class="form-control" id="catu" name="category"
-                            placeholder="Category Name" required>
-                        {{!-- <label for="formGroupInput">Regional Name <i class="fa fa-spinner fa-spin" style="font-size:22px;" id="spu" hidden></i></label>
-                        <input type="text" class="form-control" id="regionalu" name="regional"
-                            placeholder="Regional Name" required onclick="Translate(this.id)"> --}}
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="active" value="check" id="activeu"
-                            checked>
-                        <label class="form-check-label" for="active">
-                            Activate
-                        </label>
-                    </div>
-
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <div id="qrcode"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Function to fetch QR code data and display it in the modal
+    async function fetchDataAndDisplayQRCode() {
+        let qrCodeData ;
+        try {
+
+            await fetch('/initQrcode', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            adminNo: "1",
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the server response as needed
+        console.log('Server response:', data);
+        qrCodeData  = data.data;
+        // Optionally, close the modal after successful submission
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle errors as needed
+    });
+          
+
+            // Display QR code in the modal
+            new QRCode(document.getElementById("qrcode"), qrCodeData);
+            
+            alert("qrdone")
+            alert(qrCodeData);
+            // Show the modal
+            $("#qrCodeModal").modal("show");
+        } catch (error) {
+            alert(error);
+            console.error('Error fetching QR code data:', error);
+        }
+    }
+
+    // Run the function when the page is fully loaded
+</script>
+
+<script>
+    function add(id) {
+    // Get the data from the selected row
+    var adminNo = $("#" + id).closest("tr").find("td:eq(0)").text();
+    var name = $("#" + id).closest("tr").find("td:eq(1)").text();
+
+    // Check if the item is already added
+    var existingItem = $("#selectedItemsTableBody").find("td:contains('" + adminNo + "')").closest("tr");
+    
+    if (existingItem.length) {
+        // Item is already added, remove it
+        existingItem.remove();
+        document.getElementById(id).className = "btn btn-dark";
+    } else {
+        // Item is not added, add it
+        $("#selectedItemsTableBody").append("<tr><td>" + adminNo + "</td><td>" + name + "</td></tr>");
+        document.getElementById(id).className = "btn btn-success";
+    }
+    
+    
+
+}
+
+function submitData() {
+    // Get admin numbers and message
+    
+   var adminNos = [];
+    $("#selectedItemsTableBody td").each(function () {
+        var adminNo = $(this).text();
+        adminNos.push(adminNo);
+    });
+    
+    var nos = []
+
+    for(i=0;i<adminNos.length;i++){
+        if(i%2==0){
+            nos.push(Number(adminNos[i]));
+        }
+    }
+    //alert(nos)
+
+    var message = $("#messageTextarea").val();
+
+    if(message == ""){
+        alert("Enter a message");
+        return;
+    }
+    
+
+    // Use the fetch method to send data to the server (replace with your server endpoint)
+    fetch('/sendmessages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            adminNo: nos,
+            message: message,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the server response as needed
+        console.log('Server response:', data);
+        // Optionally, close the modal after successful submission
+        $("#deleteItemModal").modal("hide");
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle errors as needed
+    });
+
+    window.location.reload();
+}
+
+</script>
+
 
 <!-- Include this script in your HTML file -->
 <script>

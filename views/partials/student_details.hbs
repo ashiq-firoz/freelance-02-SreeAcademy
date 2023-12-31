@@ -59,6 +59,18 @@
                 <button type="reset" class="btn btn-secondary">Cancel</button>
             </form>
         </div>
+        <div class="col-md-6">
+    <!-- Circular Profile Image -->
+    <div class="text-center">
+        <img src="/img/profile.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+    </div>
+
+    <!-- Add to Watchlist and Edit Buttons -->
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-success">Add to Watchlist</button>
+        <button type="button" class="btn btn-warning ml-2">Edit</button>
+    </div>
+</div>
     </div>
     <hr>
     <h3>Guardian and Contact Details</h3>
@@ -129,6 +141,14 @@
 
         </div>
     </div>
+    <hr>
+    <h2>Fee Details</h2>
+    <div class="row" style=" height: 70%;">
+        <div class="col-md-6" style="max-height: 80%;overflow-y: auto;">
+            Total Amount To be Paid : {{fees}}
+        </div>
+    </div>
+    <br>
     <hr>
     <h2>Previous Enrolled Courses</h2>
     <div class="row" style=" height: 70%;">
@@ -422,4 +442,32 @@
                 alert("Error occurred while processing the request.");
             });
     }
+</script>
+
+<script>
+    function calculateAge() {
+        // Get the date of birth input value
+        var dobInput = document.getElementById('dob');
+        var dobValue = dobInput.value;
+
+        // Check if a valid date is entered
+        if (dobValue) {
+            // Calculate the age
+            var dobDate = new Date(dobValue);
+            var currentDate = new Date();
+
+            var age = currentDate.getFullYear() - dobDate.getFullYear();
+
+            // Adjust the age based on the birthdate in the current year
+            if (currentDate.getMonth() < dobDate.getMonth() || (currentDate.getMonth() === dobDate.getMonth() && currentDate.getDate() < dobDate.getDate())) {
+                age--;
+            }
+
+            // Update the age input field
+            document.getElementById('age').value = age;
+        }
+    }
+
+    // Attach the calculateAge function to the onchange event of the DOB input
+    document.getElementById('dob').onchange = calculateAge;
 </script>

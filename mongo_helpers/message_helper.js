@@ -1,31 +1,121 @@
-const accountSid = 'ACe89272c5c418b3829cefcfa4b0e1842e';
-const authToken = '853c54f3cec0096e4f32ef6c08d2c0c6';
-const client = require('twilio')(accountSid, authToken);
-
+const Guardian = require("../models/guardianmodel");
 const Student = require("../models/studentmodel");
+const Payment = require("../models/paymentmodel");
+
+
+const { Client } = require('whatsapp-web.js');
+
+
+
+const nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
+    auth: {
+        user: 'sreekrishnaacadmey@gmail.com',
+        pass: 'SreeKrishnaAcademy#01123'
+    }
+});
+
+
 
 
 module.exports = {
-    sendmessage: (list, message) => {
+    initate: () => {
+        return new Promise(async (resolve, reject) => {
+            let qrcode;
+            client.on('qr', (qr) => {
+                // Generate and scan this code with your phone
+                console.log('QR RECEIVED', qr);
+                qrcode = qr;
+            });
+
+            resolve(qrcode);
+        });
+    },
+
+    sendmessage: (user, data) => {
         return new Promise(async (resolve, reject) => {
             try {
+
+
+                var list = data['adminNo'];
+
                 
-                if (!Array.isArray(list)) {
-                    list = [list]
-                }
-                console.log(list);
 
-                for (i = 0; i < list.length; i++) {
-                    client.messages
-                        .create({
-                            body: 'hello',
-                            from: 'whatsapp:+14155238886',
-                            to: 'whatsapp:+91'+list[i],
-                        })
-                        .then(message => console.log(message.sid));
 
+                
+                var list = data['adminNo'];
+
+                console.log("list : " + list);
+
+                // Convert the elements of list to strings
+                var stringList = list.map(String);
+
+                console.log(stringList);
+                // Assuming user is defined
+                const guardian = await Guardian.find({ user: user });
+
+                // Filter the guardians whose student values are in the stringList
+                const filteredGuardians = guardian.filter(g => stringList.includes(String(g.student)));
+
+                console.log(filteredGuardians);
+
+                // Extract the WhatsApp numbers from the filtered guardians
+                const whatsappNumbers = filteredGuardians.map(g => g.email);
+
+                console.log(whatsappNumbers)
+
+
+                for (i = 0; i < whatsappNumbers.length; i++) {
+                    let mailDetails = {
+                        from: 'sreekrishnaacadmey@gmail.com',
+                        to: whatsappNumbers[i],
+                        subject: 'Reminder',
+                        text: data['message'],
+                    };
+
+                    await transporter.sendMail(mailDetails, function (err, data) {
+                        if (err) {
+                            console.log(err);
+                            console.log('Error Occurs');
+                        } else {
+                            console.log('Email sent successfully');
+                        }
+                    });
                 }
-                resolve(true)
+
+                resolve(true);
+            }
+            catch (e) {
+                console.log(e)
+                resolve(false);
+            }
+        });
+    },
+
+    getwatchlist: (user) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const students = await Student.find({ user: user, attendance: { $lt: 30 } });
+
+                resolve(students);
+            }
+            catch (err) {
+                console.log(err);
+                resolve(false);
+            }
+        });
+    },
+
+    getstarred: (user) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const students = await Student.find({ user: user, star: true });
+
+                resolve(students);
             }
             catch (err) {
                 console.log(err)
@@ -34,33 +124,29 @@ module.exports = {
         });
     },
 
-    getwatchlist : (user)=>{
-        return new Promise(async(resolve,reject)=>{
-            try
-            {
-                const students = await Student.find({ user: user, attendance: { $lt: 30 } });
+    getduestu: (user) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const studentsWithUser = await Student.find({ user: user });
 
-                resolve(students);
+                // Extract admission numbers from the first query
+                const admissionNumbers = studentsWithUser.map(student => student.adminNo);
+
+                // Find students with a balance greater than 0 in the Payment model
+                const studentsWithPositiveBalance = await Payment.find({ student: { $in: admissionNumbers }, balance: { $gt: 0 } });
+
+                // Extract admission numbers with a positive balance
+                const admissionNumbersWithPositiveBalance = studentsWithPositiveBalance.map(payment => payment.student);
+
+                // Find the student names based on admission numbers with a positive balance
+                const studentsWithPositiveBalanceAndNames = await Student.find({ adminNo: { $in: admissionNumbersWithPositiveBalance } });
+
+                resolve(studentsWithPositiveBalanceAndNames);
+
             }
-            catch(err)
-            {
+            catch (err) {
                 console.log(err);
-                resolve(false);
-            }
-        });
-    },
-
-    getstarred : (user)=>{
-        return new Promise(async(resolve,reject)=>{
-            try{
-                const students = await Student.find({user:user,star : true});
-
-                resolve(students);
-            }
-            catch(err)
-            {
-                console.log(err)
-                resolve(false);
+                resolve(null);
             }
         });
     },

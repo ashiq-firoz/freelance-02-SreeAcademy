@@ -41,7 +41,19 @@ module.exports = {
 
     },
 
-    getteacher: (user, data) => {
+    getteachers: (user) => {
+        return new Promise(async(resolve,reject)=>{
+            try{
+                const teachers = await Teacher.find({user:user});
+                const courses = await Course.find({user:user});
+                
+                resolve([teachers,courses]);
+            } 
+            catch(err){
+                console.log(err);
+                resolve(null);
+            }
+        });
 
     },
 
@@ -57,7 +69,7 @@ module.exports = {
         });
     },
 
-    updateattendance: (user, data) => {
+    updateteacherattendance: (user, data) => {
         return new Promise(async (resolve, reject) => {
             try {
                 var list = data["present"];
@@ -78,10 +90,16 @@ module.exports = {
                     // Check if matches were found
                     numericPart = numericPart ? numericPart[0] : null;
                     textPart = textPart ? textPart[0] : null;
+                     
+                    //console.log(numericPart)
 
                     let teacher = await Teacher.findOne({ user: user, code: numericPart });
 
-                    const course = await Course.findOne({user:user,name : teacher.course});
+                    //console.log(teacher);
+
+                    const course = await Course.findOne({user:user, name : teacher.course});
+
+                    console.log(course);
                     let attend;
                     let stat = false;
                     if(textPart=="present"){
@@ -91,6 +109,8 @@ module.exports = {
                     else{
                         attend = (teacher.noofclass)/(course.noOfClass+1)*100;
                     }
+                    //console.log("attend"+attend);
+                    attend = (Math.round(attend * 100) / 100).toFixed(2);
 
                     await Teacher.findByIdAndUpdate(
                         {
@@ -114,6 +134,7 @@ module.exports = {
                 resolve(true);
             }
             catch (err) {
+                console.log(err);
                 resolve(false)
             }
         });

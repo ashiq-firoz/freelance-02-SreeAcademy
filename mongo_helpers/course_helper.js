@@ -44,7 +44,7 @@ module.exports = {
     updatecourse: (user, data) => {
         return new Promise(async (resolve, reject) => {
             try {
-
+                console.log(data);
 
                 let course = await Course.findOne({ user: user, name: data['course'] });
 
@@ -57,8 +57,8 @@ module.exports = {
                             _id: course._id,
                         },
                         {
-                            noOfClass: data['no'],
-
+                            fee: data['fee'],
+                            noOfClass : data['nos'],
                         }
                     );
                     resolve(true);
@@ -67,6 +67,7 @@ module.exports = {
 
             }
             catch (err) {
+                console.log(err)
                 resolve(false);
             }
         })

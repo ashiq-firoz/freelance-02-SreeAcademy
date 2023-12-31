@@ -1,6 +1,7 @@
 const Attendance = require("../models/attendancemodel");
 const Course = require("../models/coursemodel");
 const Default = require("../models/keepRecord");
+const Enrolled = require("../models/enrolledmodel");
 
 module.exports = {
     getchartdata: (user) => {
@@ -55,7 +56,7 @@ module.exports = {
                     const currenttotal = countInCurrentMonth;
                     const prevtotal = countInPrevMonth;
 
-                    dates = await Attendance.distinct("date", { course: courses[i], present: true });
+                    dates = await Attendance.distinct("date", { course: courses[i], present: true,teacher:false });
                     //console.log(dates);
                     // Get the current date
                     currentDate = new Date();
@@ -108,19 +109,21 @@ module.exports = {
                     current.push(currentattend);
                     prev.push(prevattendance);
 
+
+                    const noOfStudentsEnrolled = await Enrolled.countDocuments({ course: courses[i]  });
                     console.log(currentDatePresentCount)
-                    console.log(currentDateCount)
+                    console.log(noOfStudentsEnrolled )
                     
                     if(currentDateCount==0){
                         val = 0
                     }          
                     else{
-                        val = (currentDatePresentCount/currentDateCount)*100
+                        val = (currentDatePresentCount/noOfStudentsEnrolled)*100
                     }          
 
                     attendance.push(val);
 
-                    attendval.push(currentDatePresentCount+"/"+currentDateCount);
+                    attendval.push(currentDatePresentCount+"/"+noOfStudentsEnrolled);
 
                 }
 

@@ -1,7 +1,10 @@
 <style>
     a {
         color: whitesmoke;
-    }
+    },
+    li:hover  {
+    color: black !important;
+}
 </style>
 
 <div class="container-fluid">
@@ -28,22 +31,16 @@
                 <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
 
                     <li>
-                        <a {{#if backuprestore}}href="/vendor/dashboard" {{/if}}{{#if weighted}}href="/vendor/dashboard"
-                            {{/if}}{{#if view}}href="/vendor/dashboard" {{/if}} {{#if
-                            manufacturer}}href="/vendor/dashboard" {{/if}}{{#if report}}href="/vendor/dashboard"
-                            {{/if}}{{#if customer}}href="/vendor/dashboard" {{/if}}{{#if bill}}href="/vendor/dashboard"
-                            {{/if}} {{#if category}}href="/vendor/dashboard" {{/if}} {{#if
-                            item}}href="/vendor/dashboard" {{/if}}{{#if generate}}href="/vendor/dashboard" {{/if}} {{#if
-                            employee}}href="/vendor/dashboard" {{/if}}href="#" class="nav-link px-0 align-middle">
+                        <a {{#if dashboard}} href="#" {{else}} href="/dashboard" {{/if}} class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-person"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Dashboard</span>
                         </a>
 
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/attendance" style="color: aliceblue;">
+                    <li {{#if attendance}}class = "btn btn-primary" {{/if}}>
+                        <a class=" px-0 align-middle nav-link" href="/attendance" >
                             <i class="fs-4 bi-check-lg"></i><span class="ms-1 d-none d-sm-inline"
-                                style="font-size: larger;">&nbsp;Attendance</span>
+                                style="font-size: larger;">&nbsp;Student Attendance</span>
                         </a>
                         {{!-- <div class="collapse" id="list1">
                             <a class="dropdown-item btn" href="#" style="width: min-content;">Action</a>
@@ -52,39 +49,39 @@
                         </div> --}}
 
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/calendar" style="color: aliceblue;">
+                    <li {{#if calendar}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle nav-link" href="/calendar" >
                             <i class="fs-4 bi-calendar-event"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Calendar</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/cultural" style="color: aliceblue;">
+                    <li {{#if cultural}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle" href="/cultural" >
                             <i class="fs-4 bi-trophy"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Cultural Events</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/students" style="color: aliceblue;">
+                    <li {{#if students}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle nav-link" href="/students" >
                             <i class="fs-4 bi-book"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Student List</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/teachers" style="color: aliceblue;">
-                            <i class="fs-4 bi-book"></i><span class="ms-1 d-none d-sm-inline"
+                    <li {{#if teachers}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle nav-link" href="/teachers" >
+                            <i class="fs-4 bi-people"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Teachers Attendance</span>
                         </a>
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/lists" style="color: aliceblue;">
+                    <li {{#if lists}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle nav-link" href="/lists" >
                             <i class="fs-4 bi-list-ul"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Lists > </span>
                         </a>
                        
                     </li>
-                    <li>
-                        <a class="btn px-0 align-middle" href="/message" style="color: aliceblue;">
+                    <li {{#if message}}class = "btn btn-primary" {{/if}}>
+                        <a class="btn px-0 align-middle nav-link" href="/message" >
                             <i class="fs-4 bi-telegram"></i><span class="ms-1 d-none d-sm-inline"
                                 style="font-size: larger;">&nbsp;Message</span>
                         </a>
@@ -181,16 +178,20 @@
 
             <!--navbar-top-->
             <nav class="navbar navbar-expand-lg navbar-light" style="height:min-content;background-color:white;">
-                
+
+            {{#if calendar}}    
+            {{else}}
                <div class="dropdown show">
   <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <i class="bi-bell"></i><span>&nbsp;Reminders</span>
   </a>
+ 
 
   <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" id="dropdownMenu">
     <!-- Dropdown items will be added here dynamically -->
   </div>
 </div>
+ {{/if}}
 
                 <a class="btn ml-auto" href="/profile">
                     <span class="d-sm-inline mx-1 text-dark">Profile</span>

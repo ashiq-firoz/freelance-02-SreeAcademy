@@ -15,7 +15,7 @@ module.exports = {
             if(!Array.isArray(list)){
               list = [list]
             }
-            //console.log(list)
+            console.log(list)
 
             for (i =  0; i<list.length;i++) {
               const item = list[i]; 
@@ -31,7 +31,7 @@ module.exports = {
                 textPart = textPart ? textPart[0] : null;
 
                 let courses ;
-                //console.log(numericPart);
+                console.log("admno :"+numericPart);
                 const enrolledCourses =  await Enroll.find({ user: user,admissionNo:numericPart });
               
                 courses = enrolledCourses.map(course => course.course);
@@ -71,7 +71,11 @@ module.exports = {
                   await Attendance.create({user:user,admissionNo:numericPart,course : data['course'],present:false,date:data['date']});
                 }
                 let attend = (classes/sum)*100;
-
+                
+                console.log("attendance "+attend)
+                console.log("classes : "+classes)
+                attend = (Math.round(attend * 100) / 100).toFixed(2);
+                
                 await Student.findByIdAndUpdate(
                     {
                         _id:stu._id,
@@ -81,6 +85,8 @@ module.exports = {
                         totalnoofClass : classes,
                     }
                 );
+
+
             }
 
             const course = await Course.findOne({user:user,name : data['course']});

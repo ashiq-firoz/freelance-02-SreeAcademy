@@ -42,7 +42,7 @@ const studentSchema = mongoose.Schema(
     totalnoofclass : {
       type : Number,
       default : 0,
-    }
+    },
   },
   {
     timestamps: true,

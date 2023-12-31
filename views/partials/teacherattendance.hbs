@@ -42,10 +42,11 @@
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
  &nbsp; &nbsp; &nbsp;
+  <form action="/teachersattendance" method="post">
         <input type="date" name="date" id="date" class="form-control" style="width: min-content;">
  &nbsp; &nbsp; &nbsp;
         <!-- Button to open modal -->
-<button class="btn btn-dark" id="openModalBtn">Add Teacher</button>
+<button class="btn btn-dark" data-toggle="modal" data-target="#AddModal">Add Teacher</button>
        
         {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
         &nbsp; &nbsp; &nbsp; 
@@ -80,6 +81,7 @@
                 <th scope = "col">Current Attendance%</th>
             </tr>
         </thead>
+       
         <tbody id="dataBody">
             {{#each data}}
             
@@ -88,7 +90,6 @@
             {{#if this.name}}
             <tr id="{{this.name}}">
                 
-                <input type="text"  name="id" style="display: none;" value="{{this._id}}">
                 <td>
                     {{this.code}}
                 </td>
@@ -129,32 +130,41 @@
 
 <div class="container">
 <button type="submit" class="btn btn-success">Submit</button>
+</form>
 </div>
 </center>
 
 
-
 <!-- Modal -->
-<div id="myModal" class="modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Fill Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="modalForm">
-                    <!-- Form fields -->
+<div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add Teacher Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <form action="/addteacher" method="post">
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
-
                     <div class="form-group">
                         <label for="course">Course:</label>
-                        <input type="text" class="form-control" id="course" name="course" required>
+                        <select class="form-control" id="course" name="course" required>
+                            {{#each Courses}}
+                            {{#each this}}
+                            {{#if this.name}}
+                            <option value="{{this.name}}">{{this.name}}</option>
+                            {{/if}}
+                            {{/each}}
+                            {{/each}}
+                            <!-- Add more options as needed -->
+                        </select>
+                        
                     </div>
 
                     <div class="form-group">
@@ -177,16 +187,24 @@
                         <input type="number" class="form-control" id="age" name="age" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
+                    
+            
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
+
+
+ 
 
 <script>
     // Get the modal and buttons
-    const modal = document.getElementById("myModal");
+    const modal = document.getElementById("AddModal");
     const openModalBtn = document.getElementById("openModalBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
 
@@ -365,4 +383,32 @@ function Search()
     }
 }
 
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Event listener for checkbox clicks
+    document.querySelectorAll('.custom-checkbox input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener('click', function () {
+            // Uncheck all checkboxes in the same row
+            uncheckOtherCheckboxesInRow(checkbox);
+        });
+    });
+
+    // Function to uncheck other checkboxes in the same row
+    function uncheckOtherCheckboxesInRow(clickedCheckbox) {
+        var row = clickedCheckbox.closest('tr');
+        var checkboxesInRow = row.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+        
+        checkboxesInRow.forEach(function (checkbox) {
+            if (checkbox !== clickedCheckbox) {
+                checkbox.checked = false;
+            }
+        });
+    }
+
+    // Rest of your code...
+});
 </script>

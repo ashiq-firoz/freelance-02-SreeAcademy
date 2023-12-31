@@ -88,7 +88,7 @@ add td element
             
             {{#each this}}
             {{#if this.name}}
-            <tr id="{{this.name}}">
+            <tr id="{{this.name}}" data-attendance="{{this.attendance}}">
                 
                 <input type="text"  name="id" style="display: none;" value="{{this._id}}">
                 <td>
@@ -108,8 +108,8 @@ add td element
                         <i class="fs-4 bi-pencil-square"></i>
                     </a>
                     &nbsp;
-                    <button type="button" class="btn btn-dark">
-                        <i class="fs-4 bi-star"></i>
+                    <button type="button" {{#if this.star}} class="btn btn-primary" {{else}} class="btn btn-dark"  {{/if}} onclick="star(this.id)" id="{{this.adminNo}}">
+                        <i class="fs-4 bi-star" ></i>
                     </button>
                     &nbsp;
                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this._id}}del" onclick="del(this.id)">
@@ -128,6 +128,80 @@ add td element
     </center>
     </div>
 </div>
+
+
+<script>
+    function star(id)
+    {
+        // Data to be sent in the request body (replace this with your actual data)
+const postData = {
+  admno: id,
+  status: 'true',
+};
+
+// Options for the fetch request
+const requestOptions = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json' // Set the content type based on your API requirements
+    // You may also include other headers here as needed
+  },
+  body: JSON.stringify(postData) // Convert the data to JSON format for the request body
+};
+
+// Perform the fetch request
+fetch("/updatestustatus", requestOptions)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json(); // Parse the response body as JSON
+  })
+  .then(data => {
+    // Handle the successful response data here
+    if(data.status==true){
+        if(data.ch == true){
+            document.getElementById(id).className = "btn btn-dark";
+        }
+        else{
+            document.getElementById(id).className = "btn btn-primary";
+        }
+    
+    
+    }
+    console.log('Response data:', data);
+  })
+  .catch(error => {
+    // Handle errors here
+    console.error('Error:', error);
+  });
+    }
+</script>
+
+<!-- Add this script after the HTML table -->
+<script>
+    // JavaScript function to set the class of the <tr> based on attendance
+    function setRowClass() {
+        // Get all <tr> elements inside the #mainbody tbody
+        var rows = document.querySelectorAll('#mainbody tr');
+
+        // Loop through each row
+        rows.forEach(function (row) {
+            // Get the attendance value from the data-attendance attribute
+            var attendance = parseInt(row.getAttribute('data-attendance'));
+
+            // Check if attendance is less than 30
+            if (attendance < 30) {
+                // Add the "btn-danger" class to the row
+                row.classList.add('btn-danger');
+            }
+        });
+    }
+
+    // Run the function on page load
+    window.onload = setRowClass;
+</script>
+
 
 <hr>
 

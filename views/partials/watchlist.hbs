@@ -34,9 +34,11 @@
 
 <nav class="navbar navbar-light justify-content-between">
     <div class="container-fluid d-flex justify-content-center">
-        <select class="form-control" style="width: 150px;">
+        <select class="form-control" id="listSelector" style="width: 150px;" onchange="redirect()">
+            <option value="">Select a List</option>
   <option value="watch">Watch List</option>
   <option value="star">Starred List</option>
+  <option value="low">Students with less Attendance</option>
 </select> 
          &nbsp; &nbsp; &nbsp; 
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
@@ -44,11 +46,43 @@
        
         {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
         &nbsp; &nbsp; &nbsp; 
-        <button type="button" class="btn btn-dark" style="color:white" data-toggle="modal" data-target="#addcategorymodal">
-            <i class="fs-4 bi-plus-lg"></i><span class="ms-1 d-none d-sm-inline">&nbsp;Add new </span>
-        </button>
+        
     </div>
 </nav>
+
+
+<script>
+
+     window.onload = function() {
+      // Your function code goes here
+      var c = {{{choice}}}
+      if(c!=null){
+        document.getElementById("listSelector").value  = c;
+      }
+      
+      
+    };
+</script>
+
+<script>
+
+    function redirect() {
+      var selectElement = document.getElementById("listSelector");
+      var selectedValue = selectElement.value;
+
+      if (selectedValue == "watch") {
+        // Redirect to the watch link
+        window.location.href = "/getwatchlist";
+
+      } else if (selectedValue == "star") {
+        // Redirect to the star link
+        window.location.href = "/getstarred";
+      }
+      else if(selectedValue == "low"){
+        window.location.href = "/getlowattendance";
+      }
+    }
+  </script>
 
 
 <!--
@@ -80,7 +114,7 @@ add td element
             <tr>
                 <th scope="col">Admission No</th>
                 <th scope="col">Name</th>
-                <th scope="col">Option</th>
+                <th scope="col">Options</th>
             </tr>
         </thead>
         <tbody id="mainbody">
@@ -101,13 +135,9 @@ add td element
                     {{this.name}}
                 </td>
                 <td>
-                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" id="{{this.name}}del" onclick="del(this.id)">
-                        <i class="fs-4 bi-trash"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteItemModal" >
-                        <i class="fs-4 bi-star"></i>
-                    </button>
+                    {{this.attendance}}&nbsp;%
                 </td>
+                
             {{/if}}
             {{/each}}
             </tr>
