@@ -15,7 +15,7 @@ module.exports = {
                         venue : data['venue'],
                         awardee : data['awardee'],
                         awardName : data['awardname'],
-
+                        name : data['name'],
                     }
                 );
                 resolve(true);
@@ -64,6 +64,7 @@ module.exports = {
                         venue : data['venue'][i],
                         awardee : data['awardee'][i],
                         awardName : data['awardname'][i],
+                        name : data['name'][i],
                         }
                     );
                 }

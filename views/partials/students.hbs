@@ -36,7 +36,7 @@
 <nav class="navbar navbar-light justify-content-between">
     <h2>Student List</h2>
     <div class="container-fluid d-flex justify-content-center">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
+        <input class="form-control me-2" type="search" id="searchBox" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
        
         {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
@@ -129,6 +129,25 @@ add td element
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to filter table rows based on search box input
+        $('#searchBox').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+
+            $('#mainbody tr').each(function () {
+                var nameText = $(this).find('td:eq(1)').text().toLowerCase();
+
+                if (nameText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     function star(id)

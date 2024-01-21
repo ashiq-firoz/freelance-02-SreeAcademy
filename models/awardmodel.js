@@ -12,6 +12,9 @@ const awardListSchema = mongoose.Schema(
       required: [true, "Please add name"],
       trim: true,
     },
+    name : {
+      type:String,
+    },
     event: {
       type: String,
       required: [true, "Please add event"],

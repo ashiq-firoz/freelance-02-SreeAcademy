@@ -38,6 +38,9 @@ const {
   addstupayment,
   deleteStudent,
   getwatchliststudents,
+  delstupayment,
+  addphoto,
+  addToHall,
 } = require("../mongo_helpers/student_helper");
 
 const { addteacher, getteacherattendance, getteacher, getteachers, updateteacherattendance } = require("../mongo_helpers/teacher_helper");
@@ -190,11 +193,12 @@ router.get("/cultural", (req, res) => {
 router.get("/students", (req, res) => {
   if (req.session.login == true) {
     getstudents(req.session.user).then((response) => {
+      console.log(response)
       if (response == false) {
         res.render("dashboard", { students: true })
       }
       else {
-        res.render("dashboard", { students: true, data: response })
+        res.render("dashboard", { students: true, data: response[0] })
       }
     });
 
@@ -292,7 +296,8 @@ router.get("/getlowattendance", (req, res) => {
 router.get("/getWatchlists", (req, res) => {
   if (req.session.login == true) {
     getwatchliststudents(req.session.user).then((response) => {
-      res.render("dashboard", { message: true, choice: JSON.stringify("watch"), data: response });
+      //console.log(response[1])
+      res.render("dashboard", { message: true, choice: JSON.stringify("watch"), data: response[0],guard:response[1] });
     });
 
   }
@@ -305,7 +310,7 @@ router.get("/getWatchlists", (req, res) => {
 router.get("/getListwithdue", (req, res) => {
   if (req.session.login == true) {
     getduestu(req.session.user).then((response) => {
-      res.render("dashboard", { message: true, choice: JSON.stringify("due"), data: response });
+      res.render("dashboard", { message: true, choice: JSON.stringify("due"), data: response[0],guard:response[1] });
     });
 
   }
@@ -317,7 +322,7 @@ router.get("/getListwithdue", (req, res) => {
 router.get("/getStarreds", (req, res) => {
   if (req.session.login == true) {
     getstarred(req.session.user).then((response) => {
-      res.render("dashboard", { message: true, choice: JSON.stringify("star"), data: response });
+      res.render("dashboard", { message: true, choice: JSON.stringify("star"), data: response[0],guard:response[1] });
     });
 
   }
@@ -329,7 +334,7 @@ router.get("/getStarreds", (req, res) => {
 router.get("/getLowattendances", (req, res) => {
   if (req.session.login == true) {
     getwatchlist(req.session.user).then((response) => {
-      res.render("dashboard", { message: true, choice: JSON.stringify("low"), data: response });
+      res.render("dashboard", { message: true, choice: JSON.stringify("low"), data: response[0],guard:response[1] });
     });
 
   }
@@ -341,8 +346,8 @@ router.get("/getLowattendances", (req, res) => {
 router.get("/message", (req, res) => {
   if (req.session.login == true) {
     getstudents(req.session.user).then((response) => {
-      //console.log(response);
-      res.render("dashboard", { message: true, data: response });
+      console.log(response);
+      res.render("dashboard", { message: true, data: response[0],guard : response[1] });
     });
 
   }
@@ -436,7 +441,7 @@ router.get("/updatestudent", (req, res) => {
     getstudent(req.session.user, req.query.id).then((response) => {
       console.log(response)
       if (response != false) {
-        res.render("dashboard", { updatestudent: true, student: response[0], guardian: response[1], enroll: response[2], prev: response[3], courses: response[4], pay: response[5], fees: response[6] });
+        res.render("dashboard", { updatestudent: true, student: response[0], guardian: response[1], enroll: response[2], prev: response[3], courses: response[4], pay: response[5], fees: response[6],imgs : response[7] });
       }
       else {
         res.redirect("/students");
@@ -461,7 +466,8 @@ router.post("/addstupayment", (req, res) => {
 
 router.post("/updateguardian", (req, res) => {
   updateguardian(req.session.user, req.body).then((response) => {
-
+    //console.log("update Guardian : ");
+    //console.log(response);
     res.json({ status: response });
   });
 });
@@ -678,6 +684,18 @@ router.post("/editcourse", (req, res) => {
   }
 });
 
+router.post("/deletestuPayment",(req,res)=>{
+  if(req.session.login==true){
+    delstupayment(req.session.user,req.body).then((response)=>{
+      res.json({status:response});
+    });
+  }
+  else{
+    res.redirect("/");
+  }
+  
+});
+
 router.post("/sendmessages", (req, res) => {
   if (req.session.login == true) {
     console.log(req.body);
@@ -715,6 +733,30 @@ router.post("/teachersattendance", (req, res) => {
     res.redirect("/");
   }
 });
+
+router.post("/addProfileimg",(req,res)=>{
+  console.log(req.body);
+  console.log(req.files)
+  console.log(req.file);
+  // addphoto(req.session.user,req.files,req.body['admino']).then((response)=>{
+  //   res.redirect("/updatestudent?id="+req.body['admno']);
+  // });
+});
+
+router.post("/addtohall",(req,res)=>{
+  // console.log(req.files);
+  // console.log(req.body);
+  
+
+  addToHall(req.session.user,req.body['admno'],req.files).then((response)=>{
+    res.redirect("/updatestudent?id="+req.body['admno']);
+  });
+});
+
+
+
+
+
 
 
 module.exports = router;

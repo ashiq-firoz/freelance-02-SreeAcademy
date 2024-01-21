@@ -4,6 +4,7 @@ const PreEnroll = require("../models/prevenrolledmodel");
 const Guardian = require("../models/guardianmodel");
 const Course = require("../models/coursemodel");
 const Payment = require("../models/paymentmodel");
+const Hall = require("../models/hallofrramemodel");
 
 module.exports = {
 
@@ -11,8 +12,9 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 let students = await Student.find({ user: user });
+                let guardian = await Guardian.find({user:user});
                 
-                resolve(students);
+                resolve([students,guardian]);
             }
             catch (err) {
                 resolve(false);
@@ -26,7 +28,26 @@ module.exports = {
                 let student = await Student.findOne({ user: user, adminNo: data["admno"] });
 
                 if (student != null) {
-                    resolve(false);
+                    
+                    await Student.findByIdAndUpdate(
+                        {
+                            _id: student._id,
+                        },
+                        {
+                            user: user,
+                            name: data["name"],
+                            adminNo: data['admno'],
+                            age: data['age'],
+                            gender: data['gender'],
+                            dob: data['dob'],
+                            dateOfAdmission: data['dateofadm'],
+                            attendance: 0,
+                            watchList: false,
+                            star: false,
+                            previousStudent: false,
+                        }
+                    )
+                    resolve(true);
                 }
                 else {
                     await Student.create(
@@ -39,6 +60,7 @@ module.exports = {
                             dob: data['dob'],
                             dateOfAdmission: data['dateofadm'],
                             attendance: 0,
+                            totalnoofclass:0,
                             watchList: false,
                             star: false,
                             previousStudent: false,
@@ -197,8 +219,8 @@ module.exports = {
         return new Promise(async(resolve,reject)=>{
             try{
                 const students = await Student.find({user:user,watchList:true});
-
-                resolve(students);
+                const guardian = await Guardian.find({user:user});
+                resolve([students,guardian]);
             }
             catch(err)
             {
@@ -223,6 +245,8 @@ module.exports = {
                 const courses = await Course.find({ user: user });
 
                 const courselist = enroll.map(enroll => enroll.course);
+
+                const imgs = await Hall.find({user:user,student : data});
 
 
                 const result = await Course.aggregate([
@@ -264,7 +288,7 @@ module.exports = {
                 // console.log(students)
 
 
-                resolve([students, guardian, enroll, prev, courses, payment,totalFees]);
+                resolve([students, guardian, enroll, prev, courses, payment,totalFees,imgs]);
             }
             catch (err) {
                 resolve(false);
@@ -310,6 +334,21 @@ module.exports = {
                 resolve(true);
             }
             catch (err) {
+                resolve(false);
+            }
+        });
+    },
+
+    delstupayment : (user,data)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                await Payment.deleteOne({user:user,_id:data['id']});
+
+                resolve(true);
+            }
+            catch(err)
+            {
+                console.log(err)
                 resolve(false);
             }
         });
@@ -409,5 +448,99 @@ module.exports = {
             }
             
         });
-    }
+    },
+
+    addphoto : (user,files,admno)=>{
+        return new Promise(async(resolve,reject)=>{
+            //req.files
+            if (files) {
+                const file = files.image;
+                const fileName =
+                  "public/users/img/profile" + admno + ".png";
+          
+                file.mv(fileName, (err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                });
+
+                try{
+                    const student = await Student.findOne({user:user});
+                    
+                    await Student.findByIdAndUpdate(
+                        {
+                            _id:student._id
+                        },
+                        {
+                            img : fileName,
+                        }
+                    )
+                    resolve(true);
+                }
+                catch(err){
+                    resolve(false);
+                }
+
+                
+              }
+            else{
+                resolve(false);
+            }
+          
+        })
+    },
+
+    addToHall : (user,admno,files)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                const file = files.userPicture;
+                let imgs = await Hall.find({user:user,student:admno});
+                let c = 0;
+                if(imgs == null){
+                    c = 0;
+                }
+                else{
+                    c = imgs.length;
+                }
+                const fileName =
+                  "public/users/img/hallOfFrame" + admno +""+c+ ".png";
+
+                const storename =  "/users/img/hallOfFrame" + admno +""+c+ ".png";
+          
+                file.mv(fileName, (err) => {
+                  if (err) {
+                    console.error(err);
+                  }
+                });
+
+                await Hall.create(
+                    {
+                        user:user,
+                        student : admno,
+                        img : storename,
+                    }
+                );
+                resolve(true);
+            }
+            catch(err){
+                console.log(err);
+                resolve(false);
+            }
+        });
+    },
+
+    getHallOfFrame : (user,admno)=>{
+        return new Promise(async(resolve,reject)=>{
+            try{
+                const imgs = await Hall.find({user:user,student:admno});
+                resolve(imgs);
+            }
+            catch(err)
+            {
+                console.log(err)
+                resolve(false);
+            }
+        });
+    },
+
 }

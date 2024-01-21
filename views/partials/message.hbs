@@ -16,6 +16,15 @@
 
 
 
+ {{#each guard}}
+ {{#each this}}
+ <input type="text" id="whats{{this.student}}" hidden value="{{this.email}}">
+ 
+ {{/each}}
+ {{/each}}
+
+
+
 <div class="alert alert-warning" role="alert" id="sendalert" hidden="true">
                     Adding Category..
 </div>
@@ -40,13 +49,14 @@
     <div class="container-fluid d-flex justify-content-center">
         <select class="form-control" style="width: 150px;" id="listSelector" onchange="redirect()">
   <option value="">Select An Option</option>
+  <option value="all">All</option>
   <option value="watch">Watch List</option>
   <option value="star">Starred List</option>
   <option value="low">Students low on Attendance</option>
   <option value="due">Students With due</option>
 </select> 
          &nbsp; &nbsp; &nbsp; 
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
+        <input class="form-control me-2" type="search" id="searchSelectBox" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
        
     </div>
@@ -85,6 +95,9 @@
       }
       else  if(selectedValue == "due"){
         window.location.href = "/getListwithdue";
+      }
+      else if(selectedValue == "all"){
+        window.location.href = "/message";
       }
     }
   </script>
@@ -139,6 +152,29 @@
     </center>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to filter fourth table rows based on search box input
+        $('#searchSelectBox').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+
+            $('#mainbody tr').each(function () {
+                var nameText = $(this).find('td:eq(1)').text().toLowerCase();
+
+                if (nameText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+
+
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -326,18 +362,24 @@
 
 function submitData() {
     // Get admin numbers and message
+    //alert("send")
     
    var adminNos = [];
     $("#selectedItemsTableBody td").each(function () {
         var adminNo = $(this).text();
+        //alert(adminNo)
         adminNos.push(adminNo);
     });
     
     var nos = []
 
+    //alert(adminNos)
+
     for(i=0;i<adminNos.length;i++){
         if(i%2==0){
-            nos.push(Number(adminNos[i]));
+            //alert(Number(adminNos[i]))
+            //alert(document.getElementById("whats"+Number(adminNos[i])).value)
+            nos.push(document.getElementById("whats"+Number(adminNos[i])).value);
         }
     }
     //alert(nos)
@@ -348,8 +390,16 @@ function submitData() {
         alert("Enter a message");
         return;
     }
-    
 
+    var emailIds = nos;
+
+        // Generate the mailto link with email addresses
+        var mailtoLink = 'mailto:' + emailIds.join(',') + '?subject=Reminder%20Message&body='+message;
+
+        // Open the default email client
+        window.location.href = mailtoLink;
+    
+    /*
     // Use the fetch method to send data to the server (replace with your server endpoint)
     fetch('/sendmessages', {
         method: 'POST',
@@ -372,6 +422,8 @@ function submitData() {
         console.error('Error:', error);
         // Handle errors as needed
     });
+
+    */
 
     window.location.reload();
 }
@@ -490,4 +542,18 @@ function Search()
     }
 }
 
+</script>
+
+
+<script>
+    function composeEmail() {
+        // Set the email addresses
+        var emailIds = ['email1@example.com', 'email2@example.com', 'email3@example.com'];
+
+        // Generate the mailto link with email addresses
+        var mailtoLink = 'mailto:' + emailIds.join(',') + '?subject=Your%20Subject&body=Your%20Message%20Here';
+
+        // Open the default email client
+        window.location.href = mailtoLink;
+    }
 </script>

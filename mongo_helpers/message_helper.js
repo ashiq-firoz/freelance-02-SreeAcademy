@@ -1,7 +1,7 @@
 const Guardian = require("../models/guardianmodel");
 const Student = require("../models/studentmodel");
 const Payment = require("../models/paymentmodel");
-
+const mailgunTransport = require('nodemailer-mailgun-transport');
 
 const { Client } = require('whatsapp-web.js');
 
@@ -68,23 +68,34 @@ module.exports = {
 
                 console.log(whatsappNumbers)
 
+                const auth = {
+                    auth: {
+                        api_key: 'b1bc833bcfeee6bb8b2dfd6b9acab345-5465e583-87464064', // replace with your Mailgun API key
+                        domain: 'sandbox01d5ebf5d3c6428f9103eda889d41dbf.mailgun.org' // replace with your Mailgun domain
+                    }
+                };
+                const nodemailerMailgun = nodemailer.createTransport(mailgunTransport(auth));
+                
+                
+
 
                 for (i = 0; i < whatsappNumbers.length; i++) {
-                    let mailDetails = {
+                    let mailOptions = {
                         from: 'sreekrishnaacadmey@gmail.com',
                         to: whatsappNumbers[i],
-                        subject: 'Reminder',
-                        text: data['message'],
+                        subject: 'Reminder or Message',
+                        html: `${data['message']}`
                     };
-
-                    await transporter.sendMail(mailDetails, function (err, data) {
-                        if (err) {
-                            console.log(err);
-                            console.log('Error Occurs');
+                
+                    nodemailerMailgun.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
                         } else {
-                            console.log('Email sent successfully');
+                            console.log('Email sent:');
                         }
                     });
+
+
                 }
 
                 resolve(true);
@@ -100,8 +111,9 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const students = await Student.find({ user: user, attendance: { $lt: 30 } });
+                const guardian = await Guardian.find({user:user}); 
 
-                resolve(students);
+                resolve([students,guardian]);
             }
             catch (err) {
                 console.log(err);
@@ -114,8 +126,9 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const students = await Student.find({ user: user, star: true });
+                const guardian = await Guardian.find({user:user}); 
 
-                resolve(students);
+                resolve([students,guardian]);
             }
             catch (err) {
                 console.log(err)
@@ -128,6 +141,8 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const studentsWithUser = await Student.find({ user: user });
+                const guardian = await Guardian.find({user:user});
+                
 
                 // Extract admission numbers from the first query
                 const admissionNumbers = studentsWithUser.map(student => student.adminNo);
@@ -141,7 +156,7 @@ module.exports = {
                 // Find the student names based on admission numbers with a positive balance
                 const studentsWithPositiveBalanceAndNames = await Student.find({ adminNo: { $in: admissionNumbersWithPositiveBalance } });
 
-                resolve(studentsWithPositiveBalanceAndNames);
+                resolve([studentsWithPositiveBalanceAndNames,guardian]);
 
             }
             catch (err) {

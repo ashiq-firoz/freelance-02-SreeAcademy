@@ -35,13 +35,16 @@
 <nav class="navbar navbar-light justify-content-between">
     <div class="container-fluid d-flex justify-content-center">
         <select class="form-control" style="width: 300px;" id="eventSelect">
-            <option value="none">Choose Event</option>
+            <option value="none">Choose Option</option>
            <option value="event"> Award List</option>
             <option value="2ndevent">M.S Subbulakshmi Music Festival</option>
 </select> 
-         &nbsp; &nbsp; &nbsp; 
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
-        &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
+        
+        {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
+        &nbsp; &nbsp; &nbsp; 
+
+        <input class="form-control me-2" type="search" placeholder="Search by event" aria-label="Search" name="search" id="searchInput" onchange="searchTable()" id="search" autofocus style="width: 150px;">
+        &nbsp;<button class="btn btn-dark" onclick="searchTable()"><i class="bi-search"></i></button> 
        
         {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
         &nbsp; &nbsp; &nbsp; 
@@ -52,6 +55,29 @@
         {{/if}}
     </div>
 </nav>
+
+
+<script>
+function searchTable() {
+    var input, filter, table, tbody, tr, td, i, txtValue;
+    input = document.getElementById("searchInput");
+    filter = new RegExp(input.value, 'i'); // Case-insensitive regex
+    table = document.getElementById("tableBody");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[2]; // Index 2 corresponds to the "Name" column
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.match(filter)) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
 
 <script>
   // Get the select element
@@ -86,6 +112,7 @@
             <tr>
                 <th scope="col">Date</th>
                 <th scope="col">Venue</th>
+                <th scope="col">Event</th>
                 <th scope="col">Awardee</th>
                 <th scope="col">Award Name</th>
 
@@ -103,8 +130,10 @@
                     {{this.date}}
                 </td>
                 <td>
-                   
                     {{this.venue}}
+                </td>
+                <td>
+                    {{this.name}}
                 </td>
                 <td>
                     {{this.awardee}}
@@ -146,6 +175,11 @@
     venueInput.name = "venue";
     venueInput.placeholder = "Venue"
     venueInput.className = 'form-control';
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = "name";
+    nameInput.placeholder = "name"
+    nameInput.className = 'form-control';
     const awardeeInput = document.createElement('input');
     awardeeInput.type = 'text';
     awardeeInput.name = "awardee"
@@ -163,11 +197,13 @@
       <td></td>
       <td></td>
       <td></td>
+      <td></td>
     `;
     newRow.children[0].appendChild(dateInput);
     newRow.children[1].appendChild(venueInput);
-    newRow.children[2].appendChild(awardeeInput);
-    newRow.children[3].appendChild(awardnameInput);
+    newRow.children[2].appendChild(nameInput);
+    newRow.children[3].appendChild(awardeeInput);
+    newRow.children[4].appendChild(awardnameInput);
 
     // Append the new row to the table body
     document.getElementById('tableBody').appendChild(newRow);

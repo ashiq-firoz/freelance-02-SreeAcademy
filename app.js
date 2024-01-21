@@ -6,6 +6,8 @@ var logger = require('morgan');
 var hbs = require('express-handlebars');
 const mongoose = require("mongoose");
 var session = require('express-session')
+const cors = require('cors');
+var fileupload = require("express-fileupload");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,9 +21,12 @@ app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutDir:__di
 app.use(session({secret:"key",cookie:{maxAge:1000 * 86400}})) //1 day
 app.use(logger('dev'));
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(fileupload());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to DB and start server
 const PORT = 8000;

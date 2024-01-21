@@ -43,6 +43,10 @@ const studentSchema = mongoose.Schema(
       type : Number,
       default : 0,
     },
+    img : {
+      type:String,
+      default : "/img/profile.png"
+    },
   },
   {
     timestamps: true,

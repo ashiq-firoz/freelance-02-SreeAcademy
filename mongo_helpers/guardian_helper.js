@@ -47,13 +47,15 @@ module.exports = {
                             whatsapp : data['whatsapp'],
                         }
                         );
+                        resolve(true);
                 }
                 else{
                     resolve(false);
                 }
             }
             catch(err){
-
+                console.log(err)
+                resolve(false);
             }
         });
     },

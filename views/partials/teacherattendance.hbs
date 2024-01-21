@@ -39,17 +39,17 @@
 
 <nav class="navbar navbar-light justify-content-center">
     <div class="container-fluid d-flex justify-content-center">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
+        <button class="btn btn-dark" data-toggle="modal" data-target="#AddModal">Add Teacher</button>
+        &nbsp; &nbsp; &nbsp;
+        <input class="form-control me-2" type="search" id="searchDataBox"  placeholder="Search" aria-label="Search" name="search" onchange="Search()" id="search" autofocus style="width: 150px;">
         &nbsp;<button class="btn btn-dark"><i class="bi-search"></i></button> 
  &nbsp; &nbsp; &nbsp;
   <form action="/teachersattendance" method="post">
         <input type="date" name="date" id="date" class="form-control" style="width: min-content;">
- &nbsp; &nbsp; &nbsp;
         <!-- Button to open modal -->
-<button class="btn btn-dark" data-toggle="modal" data-target="#AddModal">Add Teacher</button>
+
        
-        {{!-- &nbsp;<button class="btn btn-outline-success">Search</button> --}}
-        &nbsp; &nbsp; &nbsp; 
+        
        
     </div>
 </nav>
@@ -123,6 +123,27 @@
     </center>
     </div>
 </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to filter second table rows based on search box input
+        $('#searchDataBox').on('input', function () {
+            var searchText = $(this).val().toLowerCase();
+
+            $('#dataBody tr').each(function () {
+                var nameText = $(this).find('td:eq(1)').text().toLowerCase();
+
+                if (nameText.includes(searchText)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
 
 
 <hr>

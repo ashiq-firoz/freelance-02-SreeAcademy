@@ -12,8 +12,9 @@ const hallOfFrameSchema = mongoose.Schema(
       required: [true, "Please add student"],
       trim: true,
     },
-    imgList: {
-      type: [String],
+    img: {
+      type: String,
+      default : ""
     },
   },
   {

@@ -61,25 +61,78 @@
                 <button type="reset" class="btn btn-secondary">Cancel</button>
             </form>
         </div>
+    {{/if}}
+        {{/each}}
+    
        
         <div class="col-md-6">
     <!-- Circular Profile Image -->
     <div class="text-center">
-        <img src="/img/profile.png" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+    <form  enctype="multipart/form-data" action="/addProfileimg" method="post">
+        {{#each student}}
+    {{#if this.name}}
+        <img src="{{this.img}}" alt="Profile Image" id="preview" onclick="getfile()" class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+    {{/if}}
+    {{/each}}
+    
+    <input class="form-control" type="file" id="img2" name="image" hidden  accept="image/*">
+    
+    
+        
     </div>
-    <!-- Hidden file input for choosing a photo -->
-    <form action="/addprofilepic" method="post" enctype="multipart/form-data">
-    <input type="file" id="photoInput" style="display: none;">
+    
+
+
+      
+                        {{!-- <div class="row mt-2">
+                            <div class="col-md-4">
+                                {{#if this.logo}}
+                                 <img src="{{this.logo}}" onclick="getfile()" class="rounded mx-auto d-block" alt="..." id ="preview" style="width: 13rem;"  data-toggle="tooltip" data-placement="right" title="Click to change logo">
+                                {{else}}
+                                <img src="/img/defaultlogo.jpg" onclick="getfile()" class="rounded mx-auto d-block" alt="..." id ="preview" style="width: 13rem;"  data-toggle="tooltip" data-placement="right" title="Click to change logo">
+                                {{/if}}
+                            </div> --}}
+                            {{!-- <div class="col-md-4">
+                                <button type="button" class="btn btn-dark" style="width: min-content;" onclick="getfile()">
+                                    <i class="bi-pencil-fill"></i>
+                                </button>
+                                <br>
+                                 
+                            </div> --}}
+
     <!-- Add to Watchlist and Edit Buttons -->
-    <div class="text-center mt-3">
+      <div class="text-center mt-3">
         <a href="/addtowatchlist?id={{this.adminNo}}" type="button" {{#if this.watchList}} class="btn btn-primary" {{else}} class="btn btn-dark" {{/if}}>{{#if this.watchList}}Remove From Watchlist {{else}} Add to Watchlist {{/if}}</a>
      
-        <button type="button" class="btn btn-warning ml-2"  onclick="choosePhoto()">Edit Photo</button>
-        <button type="button" class="btn btn-primary ml-2" onclick="savePhoto()" type="submit">Save Photo</button>
+        {{!-- <button type="button" class="btn btn-warning ml-2"  onclick="getfile()">Edit Photo</button>    --}}
+        {{!-- <button type="submit" class="btn btn-primary">save</button> --}}
+        </form>
+
+        
+                            <script>
+                              document.getElementById('img2').addEventListener('change', function(event) {
+                              const file = event.target.files[0];
+                              const reader = new FileReader();
+
+                              reader.onload = function() {
+                                   const imgElement = document.getElementById('preview');
+                                   imgElement.src = reader.result;
+                                  
+                                }
+
+                             reader.readAsDataURL(file);
+                             });
+                            </script>
+                             <script>
+                                function getfile() {
+                                    document.getElementById("img2").click();
+                                    
+                                }
+                            </script>
+ 
     </div>
-    </form>
-   {{/if}}
-        {{/each}}
+    
+   
 </div>
     </div>
     
@@ -326,6 +379,7 @@
                         <th scope="col">Date</th>
                         <th scope="col">Amount</th>
                         <th scope="col">Balance</th>
+                        <th scope="col">Option</th>
                     </tr>
                 </thead>
                 <tbody id="paymentTableBody">
@@ -335,6 +389,9 @@
                     <td>{{this.date}}</td>
                     <td>{{this.amount}}</td>
                     <td>{{this.balance}}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deletePayment('{{this._id}}')"><i class="fs-4 bi-trash"></i></button>
+                    </td>
                 </tbody>
             </table>
         </div>
@@ -371,19 +428,102 @@
     <br>
     {{/if}}
     <hr>
+
+ <style>
+    /* Add custom styles for rounded images */
+    .rounded-img {
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 100%;
+    }
+  </style>
+
      <div class="row container">
-        <h3>Hall Of Frame &nbsp;&nbsp;</h3>
+        <h3>Hall Of Fame &nbsp;&nbsp;</h3>
         
     </div><br>
-    <div class="row" style=" height: 70%;">
-        <div class="col-md-6" style="max-height: 80%;overflow-y: auto;">
-            <label for="">Add Image</label>
-            <input type="file" name="" id="imageUploadField" accept="image/*"><br><br>
-        </div>
-        <button type="button" class="btn btn-primary ml-2">Save Photo</button>
+    <div class="row" style="height: 70%;">
+    <div class="col-md-3" style="max-height: 80%;overflow-y: auto;">
+      <form action="http://localhost:3000/update-profile" method="post" id="test">
+      {{#each student}}
+    {{#if this.name}}
+    <input type="text" name="admno" value="{{this.adminNo}}" hidden/>
+    {{/if}}
+    {{/each}}
+    <input type="file" class="form-control" placeholder="Add an image" accept="image" name="userPicture" />
+    <br>&nbsp;
+    <button type="submit" class="btn btn-dark">Add Image</button>
+</form>
+  </div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+      <br>
+      
+    <div class="col-md-9">
+        {{#each imgs}}
+        {{#each this}}
+        {{#if this.img}}
+       <img class="img-fluid" src="{{this.img}}">
+       {{/if}}
+       {{/each}}
+       {{/each}}
+       
     </div>
+  </div>
     <br> <br><br>
 </div>
+
+<script>
+
+  const form = document.getElementById("test");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    //alert(formData)
+    axios
+      .post("/addtohall", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        //alert(res);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+      window.location.reload();
+  });
+</script>
+
+<script>
+function readFile() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          const fileContent = event.target.result;
+          alert("File Content:\n" + fileContent);
+          fetch("/addtohall", {
+        method: 'POST',
+        // Remove 'Content-Type' header, as it is not needed for FormData
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // },
+        body: {file : "h"}// Use formData instead of JSON.stringify(data)
+    });
+        };
+
+        reader.readAsText(file); 
+        
+        // You can use readAsBinaryString, readAsDataURL, etc., based on your needs
+      } else {
+        alert("Please select a file.");
+      }
+    }
+  </script>
 
 <script>
         function choosePhoto() {
@@ -407,7 +547,33 @@
                 alert("Please choose a photo before saving.");
             }
         }
-    </script>
+
+</script>
+
+<script>
+
+function sendTest() {
+    alert("send");
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    alert(file)
+    alert(formData)
+
+    fetch("/addtohall", {
+        method: 'POST',
+        // Remove 'Content-Type' header, as it is not needed for FormData
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // },
+        body: formData // Use formData instead of JSON.stringify(data)
+    });
+}
+
+</script>
+
 
 
 
@@ -434,6 +600,32 @@
       .then(data => {
         
         console.log('Course deleted successfully:', data);
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+
+  function deletePayment(id) {
+    // Assuming you want to send a request to the server to delete the course
+    // You can use fetch or any other method to send the request
+    fetch('/deletestuPayment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: id}),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        
+        console.log('Payment deleted successfully:', data);
         window.location.reload();
       })
       .catch(error => {
@@ -508,7 +700,7 @@
         }
         
         // Send data to the server using fetch
-        fetch('/addguardian', {
+        fetch('/updateguardian', {
             method: 'POST',
             headers: {
                     'Content-Type': 'application/json',
@@ -672,6 +864,7 @@
     var paymentCounter = 1;
 
     function addPayment() {
+        document.getElementById("due").value  = 0;
         $('#addPaymentModal').modal('show');
     }
 
@@ -714,12 +907,12 @@
                     cell5.innerHTML = document.getElementById("due").value;
 
                     // Show an alert
-                    alert("Payment added successfully");
-
+                    
+                    window.location.reload()
                     // Close the modal
                     $('#addPaymentModal').modal('hide');
                 } else {
-                    alert("Failed to add payment. Please try again.");
+                    window.location.reload()
                 }
             })
             .catch(error => {
