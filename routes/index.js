@@ -46,7 +46,7 @@ const {
 const { addteacher, getteacherattendance, getteacher, getteachers, updateteacherattendance } = require("../mongo_helpers/teacher_helper");
 const { getawards, getawards2, addEventdata, addMultiData, addNewEvent, addMultidata2, addEventdata2 } = require('../mongo_helpers/award_helper');
 const { getchartdata } = require('../mongo_helpers/dashboard_helper');
-const { sendmessage, getwatchlist, getstarred, initate, getduestu } = require('../mongo_helpers/message_helper');
+const { sendmessage, getwatchlist, getstarred, initate, getduestu, sendSMS } = require('../mongo_helpers/message_helper');
 
 
 /* GET home page. */
@@ -383,10 +383,10 @@ router.get("/addstudent", (req, res) => {
 router.post("/addstudent", (req, res) => {
   addstudent(req.session.user, req.body).then((response) => {
     if (response == false) {
-      res.json({ status: false });
+      res.redirect("/addstudent");
     }
     else {
-      res.json({ status: true });
+      res.redirect("/updatestudent?id="+req.body['admno']);
     }
   });
 
@@ -418,6 +418,7 @@ router.post("/addstucourse", (req, res) => {
     else {
       res.json({ status: true });
     }
+    // res.redirect("/updatestudent?id="+req.body['admno']);
   });
 
 });
@@ -467,7 +468,7 @@ router.post("/addstupayment", (req, res) => {
 router.post("/updateguardian", (req, res) => {
   updateguardian(req.session.user, req.body).then((response) => {
     //console.log("update Guardian : ");
-    //console.log(response);
+    console.log(response);
     res.json({ status: response });
   });
 });
@@ -699,8 +700,9 @@ router.post("/deletestuPayment",(req,res)=>{
 router.post("/sendmessages", (req, res) => {
   if (req.session.login == true) {
     console.log(req.body);
-    sendmessage(req.session.user, req.body).then((response) => {
-      res.redirect("/message");
+    sendSMS(req.session.user, req.body).then((response) => {
+      console.log(response);
+      res.json({status:response});
     })
 
   }

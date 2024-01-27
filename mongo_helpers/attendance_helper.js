@@ -29,6 +29,15 @@ module.exports = {
           // Check if matches were found
           numericPart = numericPart ? numericPart[1] : null;
 
+          if(numericPart==null){
+            // Extract text part
+          numericPart = item.match(/^(.*?)absent/i);
+          textPart = "absent"; // Since "present" is constant in your case
+
+          // Check if matches were found
+          numericPart = numericPart ? numericPart[1] : null;
+          }
+
           let courses;
           console.log("admno :" + numericPart);
           console.log(numericPart)
@@ -62,7 +71,9 @@ module.exports = {
 
           const stu = await Student.findOne({ user: user, adminNo: numericPart });
           //console.log(stu);
-          var classes = stu.totalnoofclass;
+          let classes = stu.totalnoofclass;
+
+          console.log("Class2 "+classes)
 
           if (textPart == "present") {
             classes += 1

@@ -18,7 +18,7 @@
 
  {{#each guard}}
  {{#each this}}
- <input type="text" id="whats{{this.student}}" hidden value="{{this.email}}">
+ <input type="text" id="whats{{this.student}}" hidden value="{{this.whatsapp}}">
  
  {{/each}}
  {{/each}}
@@ -263,6 +263,8 @@
                     </tbody>
                 </table>
                 <textarea id="messageTextarea" class="form-control" placeholder="Enter your message"></textarea>
+                <label for="">Send as Email (default SMS)</label>
+                <input type="checkbox" name="" class="form-control" id="email" >
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -390,14 +392,42 @@ function submitData() {
         alert("Enter a message");
         return;
     }
-
-    var emailIds = nos;
+   
+    if(document.getElementById("email").value=="check"){
+        var emailIds = nos;
 
         // Generate the mailto link with email addresses
         var mailtoLink = 'mailto:' + emailIds.join(',') + '?subject=Reminder%20Message&body='+message;
 
         // Open the default email client
         window.location.href = mailtoLink;
+    }
+    else{
+
+    
+    
+    // Use the fetch method to send data to the server (replace with your server endpoint)
+    fetch('/sendmessages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            adminNo: nos,
+            message: message,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the server response as needed
+        alert('Server response:', data);
+        // Optionally, close the modal after successful submission
+        $("#deleteItemModal").modal("hide");
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Handle errors as needed
+    });
     
     /*
     // Use the fetch method to send data to the server (replace with your server endpoint)
@@ -424,7 +454,8 @@ function submitData() {
     });
 
     */
-
+    }
+    alert("Message Sent")
     window.location.reload();
 }
 

@@ -5,6 +5,8 @@ const Guardian = require("../models/guardianmodel");
 const Course = require("../models/coursemodel");
 const Payment = require("../models/paymentmodel");
 const Hall = require("../models/hallofrramemodel");
+const Keep = require("../models/keepRecord");
+const { sendSMS } = require("./message_helper");
 
 module.exports = {
 
@@ -366,7 +368,10 @@ module.exports = {
                     reciptno: data['receiptNo'],
                     balance: data['due'],
                     date: data['date'],
-                })
+                    month:data['month'],
+                });
+
+                await sendSMS(user,{"adminNo":[data['admno']],"message":"Payment of Rs "+data['amount']+" done."})
                 //console.log(p);
                 const record = await Keep.findOne({ user: user });
 
@@ -379,6 +384,14 @@ module.exports = {
 
                 let prev = record.prevmonth;
                 let curr = record.thismonth;
+
+                if(curr==null){
+                    curr = 0;
+                }
+
+                if(prev==null){
+                    prev==0;
+                }
 
                 let date = record.startdate;
 
@@ -396,9 +409,10 @@ module.exports = {
                     curr += Number(data['amount']);
                 }
 
-                let totaldue = record.totaldue + Number(data['due'])
+                let totaldue = Number(record.totaldue) + Number(data['due'])
+                console.log(totaldue);
 
-                await Keep.findByIdAndUpdate(
+                let out = await Keep.findByIdAndUpdate(
                     { _id: record._id },
                     {
                         startdate : date,
@@ -406,12 +420,16 @@ module.exports = {
                         thismonth : curr,
                         totaldue : totaldue,
                     }
-                )
+                );
+
+                console.log(out)
+
+
 
                 resolve(true);
             }
             catch (err) {
-                //console.log(err);
+                console.log(err);
                 resolve(false);
             }
         });

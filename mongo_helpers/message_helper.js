@@ -5,9 +5,31 @@ const mailgunTransport = require('nodemailer-mailgun-transport');
 
 const { Client } = require('whatsapp-web.js');
 
-
+// Import required AWS SDK modules for SNS (Simple Notification Service)
+const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
 
 const nodemailer = require('nodemailer');
+
+// Asynchronous function to send an SMS message using AWS SNS
+async function sendSMSMessage(sns, params) {
+    // Create a new PublishCommand with the specified parameters
+    const command = new PublishCommand(params);
+
+    // Send the SMS message using the SNS client and the created command
+    const message = await sns.send(command);
+
+    // Return the result of the message sending operation
+    return message;
+}
+
+// Create an SNS client with the specified configuration
+const sns = new SNSClient({
+    region: "ap-south-1", // AWS region from environment variables
+    credentials: {
+        accessKeyId: "AKIAZR2BRYAJMMGW5JC4", // AWS access key from environment variables
+        secretAccessKey: "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" // AWS secret key from environment variables
+    }
+});
 
 var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -36,17 +58,52 @@ module.exports = {
         });
     },
 
+    sendSMS: (user, data) => {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                var list = data['adminNo'];
+
+                console.log("list : " + list);
+
+
+
+
+                for (i = 0; i < list.length; i++) {
+                    // Define parameters for the SMS message
+                    var params = {
+                        Message: data['message']+"\n \nFrom Sree Krishna Natya Sangeetha Academy\n",
+                        PhoneNumber: '91' + list[i], // Recipient's phone number from environment variables
+                        MessageAttributes: {
+                            'AWS.SNS.SMS.SenderID': {
+                                'DataType': 'String',
+                                'StringValue': 'String'
+                            }
+                        }
+                    };
+                    //Create a new PublishCommand with the specified parameters
+                    const command = new PublishCommand(params);
+
+                    // Send the SMS message using the SNS client and the created command
+                    const message = await sns.send(command);
+                    console.log("response :")
+                    console.log(message);
+
+                }
+                resolve(true);
+
+            }
+            catch (err) {
+                console.log(err)
+                resolve(false);
+            }
+        });
+    },
+
     sendmessage: (user, data) => {
         return new Promise(async (resolve, reject) => {
             try {
 
-
-                var list = data['adminNo'];
-
-                
-
-
-                
                 var list = data['adminNo'];
 
                 console.log("list : " + list);
@@ -75,8 +132,8 @@ module.exports = {
                     }
                 };
                 const nodemailerMailgun = nodemailer.createTransport(mailgunTransport(auth));
-                
-                
+
+
 
 
                 for (i = 0; i < whatsappNumbers.length; i++) {
@@ -86,7 +143,7 @@ module.exports = {
                         subject: 'Reminder or Message',
                         html: `${data['message']}`
                     };
-                
+
                     nodemailerMailgun.sendMail(mailOptions, function (error, info) {
                         if (error) {
                             console.log(error);
@@ -111,9 +168,9 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const students = await Student.find({ user: user, attendance: { $lt: 30 } });
-                const guardian = await Guardian.find({user:user}); 
+                const guardian = await Guardian.find({ user: user });
 
-                resolve([students,guardian]);
+                resolve([students, guardian]);
             }
             catch (err) {
                 console.log(err);
@@ -126,9 +183,9 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const students = await Student.find({ user: user, star: true });
-                const guardian = await Guardian.find({user:user}); 
+                const guardian = await Guardian.find({ user: user });
 
-                resolve([students,guardian]);
+                resolve([students, guardian]);
             }
             catch (err) {
                 console.log(err)
@@ -141,8 +198,8 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 const studentsWithUser = await Student.find({ user: user });
-                const guardian = await Guardian.find({user:user});
-                
+                const guardian = await Guardian.find({ user: user });
+
 
                 // Extract admission numbers from the first query
                 const admissionNumbers = studentsWithUser.map(student => student.adminNo);
@@ -156,7 +213,7 @@ module.exports = {
                 // Find the student names based on admission numbers with a positive balance
                 const studentsWithPositiveBalanceAndNames = await Student.find({ adminNo: { $in: admissionNumbersWithPositiveBalance } });
 
-                resolve([studentsWithPositiveBalanceAndNames,guardian]);
+                resolve([studentsWithPositiveBalanceAndNames, guardian]);
 
             }
             catch (err) {

@@ -25,6 +25,9 @@ module.exports = {
                             start_date: data['start'],
                             name: data['name'],
                             course : data['course'],
+                            contact : data['contact'],
+                            address : data['address'],
+                            salarydate :data['salarydate'],
                         }
                     );
                     resolve(true);

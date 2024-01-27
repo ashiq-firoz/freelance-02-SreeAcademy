@@ -16,6 +16,7 @@ module.exports = {
                     user: user,
                     name: data['course'],
                     noOfClass: 0,
+                    fee:data['fee'],
                     img: "",
                 }
             );

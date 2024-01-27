@@ -10,6 +10,23 @@
     }
 </style>
 
+<!-- Modal -->
+<div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="alertMessage"></p>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
 <script>
     function doit(){
         document.getElementById("student").value = document.getElementById("admno").value;
@@ -102,7 +119,7 @@
 
     <!-- Add to Watchlist and Edit Buttons -->
       <div class="text-center mt-3">
-        <a href="/addtowatchlist?id={{this.adminNo}}" type="button" {{#if this.watchList}} class="btn btn-primary" {{else}} class="btn btn-dark" {{/if}}>{{#if this.watchList}}Remove From Watchlist {{else}} Add to Watchlist {{/if}}</a>
+        {{!-- <a href="/addtowatchlist?id={{this.adminNo}}" type="button" {{#if this.watchList}} class="btn btn-primary" {{else}} class="btn btn-dark" {{/if}}>{{#if this.watchList}}Remove From Watchlist {{else}} Add to Watchlist {{/if}}</a> --}}
      
         {{!-- <button type="button" class="btn btn-warning ml-2"  onclick="getfile()">Edit Photo</button>    --}}
         {{!-- <button type="submit" class="btn btn-primary">save</button> --}}
@@ -205,7 +222,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="phone2">Phone 2</label>
-                        <input type="text" class="form-control" name="phone2" id="phone2" required>
+                        <input type="text" class="form-control" name="phone2" id="phone2" value="">
                     </div>
                 </div>
 
@@ -216,7 +233,7 @@
                     </div>
                     <div class="col-md-6">
                         <label for="email">Email</label>
-                        <input type="text" class="form-control" name="email" id="email" required>
+                        <input type="text" class="form-control" name="email" id="email" value="">
                     </div>
                 </div>
 
@@ -233,6 +250,10 @@
                     <h3>Enrolled Courses &nbsp;&nbsp;</h3>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal">
                         Add Course
+                    </button>
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+                        Refresh
                     </button>
                 </div><br>
 
@@ -274,6 +295,9 @@
                     <h3>Enrolled Courses &nbsp;&nbsp;</h3>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCourseModal">
                         Add Course
+                    </button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-primary" onclick="window.location.reload();">
+                        Refresh
                     </button>
                 </div><br>
 
@@ -359,16 +383,14 @@
     </div>
     <br>
     <hr>
-    {{#if pay}}
-    {{#each pay}}
-    {{#each this}}
-    {{#if this.reciptno}}
+    
     <div class="row container">
         <h3>Payment History &nbsp;&nbsp;</h3>
         <button type="button" class="btn btn-primary" onclick="addPayment()">
             Add Payment
         </button>
     </div><br>
+    
     <div class="row" style=" height: 70%;">
         <div class="col-md-6" style="max-height: 80%;overflow-y: auto;">
             <table class="table">
@@ -384,49 +406,33 @@
                 </thead>
                 <tbody id="paymentTableBody">
                     <!-- Payment details will be added here -->
+                    
+                    {{#each pay}}
+                    {{#each this}}
+                    {{#if this._id}}
+                   <tr>
                     <td>{{@../index}}</td>
                     <td>{{this.reciptno}}</td>
                     <td>{{this.date}}</td>
+                    <td>{{this.month}}</td>
                     <td>{{this.amount}}</td>
                     <td>{{this.balance}}</td>
                     <td>
                         <button class="btn btn-danger" onclick="deletePayment('{{this._id}}')"><i class="fs-4 bi-trash"></i></button>
                     </td>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    {{/if}}
-    {{/each}}
-    {{/each}}
-    {{else}}
-    <div class="row container">
-        <h3>Payment History &nbsp;&nbsp;</h3>
-        <button type="button" class="btn btn-primary" onclick="addPayment()">
-            Add Payment
-        </button>
-    </div><br>
-    <div class="row" style=" height: 70%;">
-        <div class="col-md-6" style="max-height: 80%;overflow-y: auto;">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Receipt No</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Balance</th>
                     </tr>
-                </thead>
-                <tbody id="paymentTableBody">
-                    <!-- Payment details will be added here -->
+                    {{/if}}
+                    {{/each}}
+                    {{/each}}
                 </tbody>
             </table>
         </div>
     </div>
+    
+   
     <br><br>
     <br>
-    {{/if}}
+ 
     <hr>
 
  <style>
@@ -491,7 +497,7 @@
       .catch((err) => {
         alert(err);
       });
-      window.location.reload();
+      //window.location.reload();
   });
 </script>
 
@@ -626,7 +632,7 @@ function sendTest() {
       .then(data => {
         
         console.log('Payment deleted successfully:', data);
-        window.location.reload();
+        //window.location.reload();
       })
       .catch(error => {
         console.error('Error:', error);
@@ -675,11 +681,14 @@ function sendTest() {
                 console.log(data)
                 if (data.status === true) {
                     // Handle success, e.g., show an alert
-                    alert("Data saved successfully");
+                    document.getElementById("alertMessage").innerHTML =  "Data saved successfully"
+                    $('#alertModal').modal('show');
 
                     // Optionally, you can update the UI or perform other actions here
                 } else {
                     alert("Failed to save data. Please try again.");
+                     document.getElementById("alertMessage").innerHTML =  "Data saved successfully"
+                    $('#alertModal').modal('show');
                 }
             })
             .catch(error => {
@@ -710,7 +719,8 @@ function sendTest() {
             console.log(data);
                 if (data.status === true) {
                     // Handle success, e.g., show an alert
-                    alert("Data saved successfully");
+                    document.getElementById("alertMessage").innerHTML =  "Data saved successfully"
+                    $('#alertModal').modal('show');
 
                     // Optionally, you can update the UI or perform other actions here
                 } else {
@@ -793,6 +803,23 @@ function sendTest() {
                         <input type="date" class="form-control" id="paymentDate" required>
                     </div>
                     <div class="form-group">
+                        <label for="paymentDate">Month</label>
+                        <select id="monthSelect" name="month" class="form-control" required>
+                        <option value="Jan">January</option>
+                        <option value="Feb">February</option>
+                        <option value="March">March</option>
+                        <option value="April">April</option>
+                        <option value="May">May</option>
+                        <option value="June">June</option>
+                        <option value="July">July</option>
+                        <option value="Aug">August</option>
+                        <option value="Sep">September</option>
+                        <option value="Oct">October</option>
+                        <option value="Nov">November</option>
+                        <option value="Dec">December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="amount">Amount:</label>
                         <input type="text" class="form-control" id="amount" placeholder="Enter Amount" required onkeyup="getbalance()" value="{{fees}}">
                     </div>
@@ -842,8 +869,11 @@ function sendTest() {
                 cell2.innerHTML = selectedCourse;
                 
                 // Show an alert
-                alert("Course added: " + selectedCourse);
                 
+                 document.getElementById("alertMessage").innerHTML =  "Course added: " + selectedCourse
+                    $('#alertModal').modal('show');
+                
+                //window.location.href = "/updatestudent?id="+document.getElementById("admno").value;
                 window.location.reload();
 
                 // Close the modal
@@ -854,7 +884,9 @@ function sendTest() {
                 alert('Failed to add course. Please try again.');
             });
         } else {
-            alert("Course is already added to the table");
+            
+            document.getElementById("alertMessage").innerHTML =  "Course is already added to the table"
+                    $('#alertModal').modal('show');
         }
     } else {
         alert("Please select a course");
@@ -908,16 +940,17 @@ function sendTest() {
 
                     // Show an alert
                     
-                    window.location.reload()
+                    //window.location.reload()
                     // Close the modal
                     $('#addPaymentModal').modal('hide');
                 } else {
-                    window.location.reload()
+                    //window.location.reload()
                 }
             })
             .catch(error => {
                 alert("Error occurred while processing the request.");
             });
+        
     }
 </script>
 

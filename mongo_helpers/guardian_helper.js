@@ -50,7 +50,27 @@ module.exports = {
                         resolve(true);
                 }
                 else{
-                    resolve(false);
+
+                    try
+                    {
+                        await Guardian.create(
+                            {
+                                user:user,
+                                student : data['student'],
+                                guardian : data['guardian'],
+                                parent : data['parent'],
+                                phone1 : data['phone1'],
+                                phone2 : data['phone2'],
+                                email : data['email'],
+                                whatsapp : data['whatsapp'],
+                            }
+                        );
+                        resolve(true)
+                    }
+                    catch(err){
+                        console.log(err);
+                        resolve(false);
+                    }
                 }
             }
             catch(err){

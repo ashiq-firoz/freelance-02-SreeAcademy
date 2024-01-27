@@ -15,6 +15,9 @@ const paymentHistorySchema = mongoose.Schema(
     reciptno:{
       type : String,
     },
+    month:{
+      type:String,
+    },
     date: {
       type: String,
     },

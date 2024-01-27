@@ -30,6 +30,15 @@ const teacherSchema = mongoose.Schema(
     gender: {
       type: String,
     },
+    salarydate:{
+      type:String,
+    },
+    contact: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     attendance: {
       type: Number,
       default : 0
