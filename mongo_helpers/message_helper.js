@@ -26,8 +26,8 @@ async function sendSMSMessage(sns, params) {
 const sns = new SNSClient({
     region: "ap-south-1", // AWS region from environment variables
     credentials: {
-        accessKeyId: "AKIAZR2BRYAJMMGW5JC4", // AWS access key from environment variables
-        secretAccessKey: "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" // AWS secret key from environment variables
+        accessKeyId: "", // AWS access key from environment variables
+        secretAccessKey: "" // AWS secret key from environment variables
     }
 });
 
