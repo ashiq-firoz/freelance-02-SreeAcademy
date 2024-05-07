@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Connect to DB and start server
 const PORT = 8000;
-const MONGO_URI="mongodb+srv://sreekrishnaacadmey:CyAf9yxQWrdz4t3V@cluster0.olcudcb.mongodb.net/?retryWrites=true&w=majority";
+const MONGO_URI="";
 
 const connect = mongoose
   .connect(MONGO_URI)
