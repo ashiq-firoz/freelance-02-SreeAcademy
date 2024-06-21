@@ -1,8 +1,26 @@
-#Freelance Project 02 
+# Freelance Project 02 
 
-#Installation
+## About Web App
+Full stack Web App made using Express Framework , MONGODB Atlas as DB, HBS as View Engine.
+Electron.js is used to turn this web app to a Desktop App as the Client later insisted on it.
+<br>
+It is a Learner Management System build for a Dance School.
+### Features
+- Attendance
+- Add Courses
+- Filterout and Search Students on the basis of Name, Late Fee and Less Attendance
+- Send SMS to registered phone number of each student
 
-npm install <br>
-npm start   <br>
+### Tech Stack Used
+- NODE JS
+- Express JS
+- MONGO DB ATLAS
+- AWS SNS
+- Electron JS
+- Handlebar JS
 
-assuming port 3000 is not used, if it is used change in bin/www
+# Setting up and Installation
+```
+npm install 
+npm start   
+```
