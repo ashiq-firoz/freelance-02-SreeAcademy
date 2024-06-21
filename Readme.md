@@ -20,7 +20,14 @@ It is a Learner Management System build for a Dance School.
 - Handlebar JS
 
 # Setting up and Installation
-```
-npm install 
-npm start   
-```
+- Create an .env file with
+  ```
+   accessKeyId = KEY, // AWS access key 
+   secretAccessKey = KEY //AWS secret key
+   MONGOURL = URL // Atlas connection URL
+  ```
+- Then Install Dependencies and Run the Web App with
+  ```
+  npm install 
+  npm start   
+  ```
